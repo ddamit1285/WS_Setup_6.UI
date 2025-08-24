@@ -68,7 +68,7 @@ namespace WS_Setup_6.Core.Services
                     }
                 }
 
-                // Alphabetical sort for consistency
+                // Alphabetical sort
                 return entries
                     .OrderBy(e => e.DisplayName, StringComparer.InvariantCultureIgnoreCase)
                     .ToList();
