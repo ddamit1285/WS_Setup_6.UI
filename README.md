@@ -5,3 +5,5 @@ This elimiated any configuration drift that sometimes happens when doing it manu
 Also, this saves setup time per workstation.
 
 Converted originally from PowerShell to Csharp, and uses MahApps and WPF for UI.
+
+This app is not model specific, it will work across any model workstation.
