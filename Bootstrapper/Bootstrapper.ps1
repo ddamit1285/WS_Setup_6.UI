@@ -127,7 +127,6 @@ $fade      = New-Object Windows.Media.Animation.DoubleAnimation(0,1,[TimeSpan]::
 $dispatcher= [System.Windows.Threading.Dispatcher]::CurrentDispatcher
 
 # 3) Wire up window dragging and close button
-#    (call these right after your Initialize-UI routine)
 $window.add_MouseLeftButtonDown({
     param($s,$e)
     if ($e.ChangedButton -eq 'Left') { $window.DragMove() }
