@@ -1,0 +1,85 @@
+﻿<Controls:MetroWindow x:Class="WS_Setup_6.UI.Windows.MainWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                      xmlns:vm="clr-namespace:WS_Setup_6.UI.ViewModels;assembly=WS_Setup_6.UI"
+                      xmlns:pages="clr-namespace:WS_Setup_6.UI.ViewModels.Pages"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                      mah:DialogParticipation.Register="MainHost"                     
+                      Title="Onboarding Application"
+                      Height="600"
+                      Width="900"
+                      WindowStartupLocation="CenterScreen"
+                      GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+                      ResizeMode="CanResizeWithGrip"
+                      TitleBarHeight="48">
+    <!-- Refined title bar -->
+    <Controls:MetroWindow.TitleTemplate>
+        <DataTemplate>
+            <Grid Height="48">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image Source="/Assets/AdvTechLogo.png"
+                       Height="32"
+                       VerticalAlignment="Center"
+                       Margin="16,0" />
+                <TextBlock Text="Advantage Technologies New Workstation Onboarding"
+                           Grid.Column="1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           Padding="0,0,16,0" />
+            </Grid>
+        </DataTemplate>
+    </Controls:MetroWindow.TitleTemplate>
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!-- 1) Tabs drive SelectedPage -->
+            <TabControl Grid.Row="0"
+                        Margin="25,8,0,0"
+                        SelectedValue="{Binding SelectedPage, Mode=TwoWay}"
+                        SelectedValuePath="Tag">
+                <TabItem Header="Home"
+                         Tag="HomePage" />
+                <TabItem Header="Configuration"
+                         Tag="ConfigurationPage" />
+                <TabItem Header="Baseline"
+                         Tag="BaselinePage" />
+                <TabItem Header="Uninstall"
+                         Tag="UninstallPage" />
+                <TabItem Header="Log"
+                         Tag="LogPage" />
+            </TabControl>
+            <!-- 2) ContentControl shows CurrentView -->
+            <ContentControl Grid.Row="1"
+                            Content="{Binding CurrentView}"
+                            Margin="0,8" />
+            <!-- 3) Exit button on MainViewModel -->
+            <Button Content="Exit"
+                    Command="{Binding ExitCommand}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="16" />
+        </Grid>
+        <Image Source="/Assets/AdvTechLogo.png"
+               Opacity="0.15"
+               Stretch="Uniform"
+               Width="500"
+               Height="500"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Bottom"
+               Margin="0,0,20,20"
+               IsHitTestVisible="False"
+               Panel.ZIndex="1" />
+    </Grid>
+</Controls:MetroWindow>

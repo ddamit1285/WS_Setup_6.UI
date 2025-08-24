@@ -1,0 +1,158 @@
+﻿<UserControl x:Class="WS_Setup_6.UI.Windows.Pages.UninstallPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:behaviors="clr-namespace:WS_Setup_6.UI.Behaviors"
+             xmlns:conv="clr-namespace:WS_Setup_6.UI.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Height="450"
+             Width="800">
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:NullToFalseConverter      x:Key="NullToFalseConverter" />
+        <!-- Fix for XDG0010: Define AccentButtonStyle locally if not defined elsewhere -->
+        <Style x:Key="AccentButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background"
+                    Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="FontWeight"
+                    Value="SemiBold" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="8,4" />
+            <Setter Property="Margin"
+                    Value="0" />
+            <Setter Property="Cursor"
+                    Value="Hand" />
+            <Setter Property="SnapsToDevicePixels"
+                    Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="3"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- Header -->
+            <RowDefinition Height="Auto" />
+            <!-- Toolbar -->
+            <RowDefinition />
+            <!-- DataGrid -->
+            <RowDefinition Height="Auto" />
+            <!-- Status Bar -->
+        </Grid.RowDefinitions>
+
+        <!-- 1) Page Title -->
+        <TextBlock Grid.Row="0"
+                   Text="Uninstall Applications"
+                   FontSize="24"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,12" />
+
+        <!-- 2) Toolbar -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,12">
+
+            <Button Content="Load List"
+                    Margin="0,0,8,0"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Width="100"
+                    Command="{Binding LoadAppsCommand}" />
+
+            <Button Content="Uninstall Selected"
+                    Margin="0,0,0,0"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Width="140"
+                    Command="{Binding UninstallSelectedCommand}"
+                    Click="Button_Click" />
+
+            <Button Content="Purge OEM leftovers"
+                    Margin="8,0,0,0"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Width="140"
+                    Command="{Binding PurgeOemCommand}" />
+        </StackPanel>
+
+        <!-- 3) Installed Apps List -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding InstalledApps}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  RowHeaderWidth="0"
+                  HeadersVisibility="Column"
+                  SelectionMode="Extended"
+                  SelectionUnit="FullRow"
+                  GridLinesVisibility="None"
+                  behaviors:DataGridSelectedItemsBehavior.SelectedItems="{Binding SelectedApps, Mode=OneWayToSource}">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding DisplayName}"
+                                    Width="2*" />
+                <DataGridTextColumn Header="Version"
+                                    Binding="{Binding DisplayVersion}"
+                                    Width="*" />
+                <DataGridTextColumn Header="Publisher"
+                                    Binding="{Binding Publisher}"
+                                    Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StatusBar Grid.Row="3"
+                   Margin="0,12,0,0">
+            <!-- 1. Show StatusMessage on the left -->
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}"
+                           VerticalAlignment="Center" />
+            </StatusBarItem>
+
+            <!-- 2. Spacer to push progress to the right -->
+            <StatusBarItem HorizontalAlignment="Stretch">
+                <Grid />
+            </StatusBarItem>
+
+            <!-- 3. Right-aligned: percentage text + ProgressBar -->
+            <StatusBarItem HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center">
+
+                    <!-- A. “45%” text, hidden when not uninstalling -->
+                    <TextBlock Text="{Binding ProgressPercentage, StringFormat={}{0}%}"
+                               Margin="0,0,8,0"
+                               Visibility="{Binding IsUninstalling, 
+                     Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                    <!-- B. ProgressBar, hidden when not uninstalling -->
+                    <ProgressBar Width="200"
+                                 Height="16"
+                                 Minimum="0"
+                                 Maximum="{Binding BatchMax}"
+                                 Value="{Binding BatchProgress, Mode=OneWay}"
+                                 Visibility="{Binding IsUninstalling,
+                     Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</UserControl>

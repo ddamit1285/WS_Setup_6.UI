@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="WS_Setup_6.UI.Windows.Pages.BaselinePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:behaviors="clr-namespace:WS_Setup_6.UI.Behaviors"
+             xmlns:conv="clr-namespace:WS_Setup_6.UI.Converters"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             Height="450"
+             Width="800">
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="Apply Baseline Configuration"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Margin="0,0,0,10" />
+
+            <TextBlock Text="This will apply the standard workstation baseline including registry tweaks, scheduled tasks, and service adjustments."
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,20" />
+
+            <Button Content="Run Baseline"
+                    Width="150"
+                    HorizontalAlignment="Left"
+                    Margin="20,10,10,10"
+                    Background="CornflowerBlue"
+                    Command="{Binding ApplyBaselineCommand}" />
+
+            <TextBlock Text="{Binding BaselineStatusMessage}"
+                       Margin="0,10,0,0" />
+        </StackPanel>
+    </Grid>
+</UserControl>

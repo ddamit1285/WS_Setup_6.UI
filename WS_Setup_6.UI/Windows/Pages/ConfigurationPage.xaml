@@ -1,0 +1,184 @@
+﻿<UserControl x:Class="WS_Setup_6.UI.Windows.Pages.ConfigurationPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:WS_Setup_6.UI.ViewModels;assembly=WS_Setup_6.UI"
+             xmlns:pages="clr-namespace:WS_Setup_6.UI.ViewModels.Pages;assembly=WS_Setup_6.UI"
+             xmlns:conv="clr-namespace:WS_Setup_6.UI.Converters">
+
+    <UserControl.Resources>
+        <!-- For animating the Value property -->
+        <QuadraticEase x:Key="QuadraticEaseOut"
+                       EasingMode="EaseOut" />
+
+        <!-- You can keep BoolToVis for other bindings if needed -->
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis"
+                                        CollapseInsteadOfHide="True" />
+    </UserControl.Resources>
+
+    <!-- Outer StackPanel: all direct children get 16px bottom‐margin -->
+    <StackPanel Margin="24">
+        <StackPanel.Resources>
+            <Style TargetType="FrameworkElement">
+                <Setter Property="Margin"
+                        Value="0,0,0,16" />
+            </Style>
+        </StackPanel.Resources>
+
+        <!-- Header -->
+        <TextBlock Text="Setup"
+                   FontSize="18"
+                   Margin="100,0,0,25"
+                   FontWeight="SemiBold" />
+
+        <!-- Domain Name row -->
+        <StackPanel Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="FrameworkElement">
+                    <Setter Property="Margin"
+                            Value="0,0,0,8" />
+                </Style>
+            </StackPanel.Resources>
+
+            <TextBlock Text="Domain Name:"
+                       Width="120"
+                       VerticalAlignment="Center" />
+            <TextBox Text="{Binding DomainName, UpdateSourceTrigger=PropertyChanged}"
+                     Width="400"
+                     Tag="Leave blank to skip…" />
+        </StackPanel>
+
+        <!-- Installer Path row -->
+        <StackPanel Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="FrameworkElement">
+                    <Setter Property="Margin"
+                            Value="0,0,0,8" />
+                </Style>
+            </StackPanel.Resources>
+
+            <TextBlock Text="Ninja Installer Path:"
+                       Width="120"
+                       Margin="0,8,0,0"
+                       VerticalAlignment="Center" />
+            <TextBox Text="{Binding InstallPath, UpdateSourceTrigger=PropertyChanged}"
+                     Width="400"
+                     Margin="0,8,0,0"
+                     Tag="Leave blank to skip…" />
+        </StackPanel>
+
+        <!-- Buttons row -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Margin="0,16,0,0">
+            <StackPanel.Resources>
+                <Style TargetType="FrameworkElement">
+                    <Setter Property="Margin"
+                            Value="0,0,0,8" />
+                </Style>
+            </StackPanel.Resources>
+
+            <Button Content="FIND AGENT"
+                    Command="{Binding TestPathCommand}"
+                    Width="120" />
+
+            <Button Content="BEGIN ONBOARD"
+                    Command="{Binding BeginOnboardCommand}"
+                    Margin="12,0,0,0"
+                    Width="120"
+                    IsEnabled="{Binding CanBeginOnboard}" />
+        </StackPanel>
+
+        <!-- Progress + Status area with VisualStateManager -->
+        <Grid x:Name="ProgressArea" Margin="0,40,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="ProgressStates">
+
+                    <!-- Hidden until > 0 -->
+                    <VisualState x:Name="Idle">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressBar"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{x:Static Visibility.Collapsed}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+
+                    <!-- Fade in when running -->
+                    <VisualState x:Name="Running">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressBar"
+                                                           Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimation Storyboard.TargetName="ProgressBar"
+                                             Storyboard.TargetProperty="Opacity"
+                                             To="1"
+                                             Duration="0:0:0.3" />
+                        </Storyboard>
+                    </VisualState>
+
+                    <!-- Fade out on completion -->
+                    <VisualState x:Name="Completed">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="ProgressBar"
+                                             Storyboard.TargetProperty="Opacity"
+                                             To="0"
+                                             BeginTime="0:0:0.5"
+                                             Duration="0:0:0.5" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressBar"
+                                                           Storyboard.TargetProperty="Visibility"
+                                                           BeginTime="0:0:1">
+                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{x:Static Visibility.Collapsed}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <ProgressBar x:Name="ProgressBar"
+                         Grid.Row="0"
+                         Height="16"
+                         Margin="0,8,0,4"
+                         Minimum="0"
+                         Maximum="100"
+                         Width="520"
+                         HorizontalAlignment="Left"
+                         Foreground="CornflowerBlue"
+                         Value="{Binding ProgressValue, NotifyOnTargetUpdated=True}"
+                         IsIndeterminate="{Binding IsIndeterminate}"
+                         Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}">
+
+                <ProgressBar.Triggers>
+                    <!-- Animate Value changes -->
+                    <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Value"
+                                                 Duration="0:0:0.3"
+                                                 EasingFunction="{StaticResource QuadraticEaseOut}" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ProgressBar.Triggers>
+            </ProgressBar>
+
+            <TextBlock Text="{Binding StatusText}"
+                       Grid.Row="1"
+                       FontStyle="Italic"
+                       Foreground="DarkSlateGray"
+                       Margin="0,12,0,0"
+                       TextWrapping="Wrap" />
+        </Grid>
+    </StackPanel>
+</UserControl>

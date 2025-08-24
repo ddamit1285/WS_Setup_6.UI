@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using WS_Setup_6.Core.Interfaces;
+using WS_Setup_6.Core.Models;
+
+namespace WS_Setup_6.Core.Services
+{
+    public class AppInventoryService : IAppInventoryService
+    {
+        private readonly IUninstallScanner _scanner;
+
+        public AppInventoryService(IUninstallScanner scanner)
+        {
+            _scanner = scanner;
+        }
+
+        public async Task<IReadOnlyList<UninstallEntry>> ScanInstalledAppsAsync()
+        {
+            // Scanner already does its own async work
+            return await _scanner.ScanInstalledAppsAsync();
+        }
+    }
+}
