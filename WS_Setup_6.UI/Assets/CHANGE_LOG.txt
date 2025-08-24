@@ -1,6 +1,6 @@
 ADVTECH NEW WS SETUP PROJECT
 ------------------------------
-20250702: Start
+20250702: Start (Imception of the tool and idea was back in January 2025)
 Author: Dan.Damit
 e:dan@thedamits.com
 ------------------------------
