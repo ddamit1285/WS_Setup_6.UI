@@ -8,7 +8,7 @@
   3. Copies SignCode_Expires_20260709.pfx into C:\Working and hides it.
   4. Installs the PFX certificate into LocalMachine\Root and LocalMachine\TrustedPublisher.
      - If the certificate already exists, it skips re-importing.
-  5. Creates “Onboard” shortcut on the current user’s desktop.
+  5. Creates “Onboard” shortcut on the current user’s desktop linked to WS.Setup.UI.exe.
   6. Logs all actions to C:\Working\bootstrap.log.
 #>
 
