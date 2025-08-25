@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- 1. Core WPF + C# Settings -->
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		
+		<AssemblyTitle>Advantage Technologies New Workstation Onboarding Tool</AssemblyTitle>
+		<Company>Advantage Technologies</Company>
+		<Author>Dan Damit</Author>
+		<ApplicationIcon>Assets\AdvTechLogo.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Copyright>© 2025 Advantage Technologies. All rights reserved.</Copyright>
+
+		<!-- 2. Single-file, Self-contained Publish -->
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<SelfContained>true</SelfContained>
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>MyKey.snk</AssemblyOriginatorKeyFile>
+		<!-- <PublishTrimmed>true</PublishTrimmed> -->
+		<!-- enable only after reflection testing -->
+
+		<!-- 3. Custom Version Stamp: 6.5.yyMM.ddHH -->
+		<Version>6.7.$([System.DateTime]::Now.ToString("yyMM")).$([System.DateTime]::Now.ToString("ddHH"))</Version>
+
+	</PropertyGroup>
+
+	<!-- 7. Static Assets: copy everything under Assets\ to output -->
+	<ItemGroup>
+		<Content Include="Assets\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<!-- 8. NuGet Dependencies -->
+	<ItemGroup>
+		<PackageReference Include="Cake.Powershell" Version="4.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
+		<PackageReference Include="MahApps.Metro.IconPacks" Version="6.0.0" />
+		<PackageReference Include="MahApps.Metro.Resources" Version="0.6.1" />
+		<PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+		<PackageReference Include="System.Management" Version="9.0.7" />
+	</ItemGroup>
+
+	<!-- 9. Project References -->
+	<ItemGroup>
+		<ProjectReference Include="..\WS_Setup_6.Common\WS_Setup_6.Common.csproj" />
+		<ProjectReference Include="..\WS_Setup_6.Core\WS_Setup_6.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <SplashScreen Include="Assets\AdvTechSplash.bmp" />
+	</ItemGroup>
+
+</Project>

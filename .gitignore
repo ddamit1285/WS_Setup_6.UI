@@ -1,0 +1,13 @@
+# Ignore Visual Studio folders
+.vs/
+*.bin
+
+# Ignore build artifacts
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+*.snk
+AcroRdrInstaller.exe

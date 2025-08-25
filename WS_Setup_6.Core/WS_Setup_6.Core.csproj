@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UseWPF>false</UseWPF>
+
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>MyKey.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<!-- only include packages Core actually uses -->
+	<ItemGroup>
+		<PackageReference Include="Cake.Powershell" Version="4.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
+		<PackageReference Include="MahApps.Metro.IconPacks" Version="6.0.0" />
+		<PackageReference Include="MahApps.Metro.Resources" Version="0.6.1" />
+		<PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+		<PackageReference Include="ServiceStack.Common" Version="8.8.0" />
+		<PackageReference Include="System.Management" Version="9.0.7" />
+	</ItemGroup>
+
+	<!-- point to Common (and nothing else—no UI, no Tests) -->
+	<ItemGroup>
+		<ProjectReference Include="..\WS_Setup_6.Common\WS_Setup_6.Common.csproj" />
+	</ItemGroup>
+
+</Project>
