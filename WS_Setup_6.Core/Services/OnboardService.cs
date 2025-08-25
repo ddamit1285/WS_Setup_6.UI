@@ -30,6 +30,7 @@ namespace WS_Setup_6.Core.Services
             _log = log;
         }
 
+        // Installs the NinjaRMM agent from the given MSI path
         public async Task InstallAgentAsync(string installerPath)
         {
             const string serviceName = "NinjaRMMAgent";
@@ -71,6 +72,7 @@ namespace WS_Setup_6.Core.Services
             _log.Log("Agent service stopped. It will start on next reboot.", "INFO");
         }
 
+        // Joins the machine to the specified domain using given credentials
         public Task RunDomainJoinAsync(string domainName, NetworkCredential creds)
         {
             _log.Log($"Beginning domain join: {domainName}", "INFO");
@@ -104,6 +106,7 @@ namespace WS_Setup_6.Core.Services
             });
         }
 
+        // Installs Google Chrome by downloading the enterprise MSI and running it
         public async Task InstallChromeAsync()
         {
             if (IsChromeInstalled())
@@ -160,6 +163,7 @@ namespace WS_Setup_6.Core.Services
             _log.Log($"Chrome MSI exited with code {proc.ExitCode}", "INFO");
         }
 
+        // Installs Adobe Reader from the bundled installer in the Assets folder
         public async Task InstallAdobeReaderAsync()
         {
             if (IsAdobeReaderInstalled())
@@ -196,6 +200,7 @@ namespace WS_Setup_6.Core.Services
             _log.Log("Adobe Reader installation complete.", "INFO");
         }
 
+        // Sets up dependencies: PowerShell 7, network profile, PS remoting
         public async Task SetupDependenciesAsync()
         {
             // Ensure PowerShell 7 is installed

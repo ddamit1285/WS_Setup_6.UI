@@ -15,6 +15,7 @@ namespace WS_Setup_6.Core.Services
 
         public OemRemovalService(ILogService log) => _log = log;
 
+        // Note: This method runs uninstall commands sequentially.
         public async Task RemoveOemAppsAsync(
             IEnumerable<UninstallEntry> apps,
             CancellationToken cancellationToken = default)

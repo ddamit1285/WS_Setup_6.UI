@@ -15,6 +15,7 @@ namespace WS_Setup_6.Core.Services
             _scanner = scanner;
         }
 
+        // Note: The scanner itself handles async work internally
         public async Task<IReadOnlyList<UninstallEntry>> ScanInstalledAppsAsync()
         {
             // Scanner already does its own async work
