@@ -9,3 +9,5 @@ Converted originally from PowerShell to Csharp, and uses MahApps and WPF for UI.
 This app is not model specific, it will work across any model workstation.
 
 Link to Changelog.txt: https://github.com/ddamit1285/WS_Setup_6.UI/blob/main/WS_Setup_6.UI/Assets/CHANGE_LOG.txt
+
+<img width="899" height="597" alt="image" src="https://github.com/user-attachments/assets/60409881-6004-4f78-bdf5-5da47fba3598" />
