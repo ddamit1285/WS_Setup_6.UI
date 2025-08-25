@@ -7,3 +7,5 @@ Also, this saves setup time per workstation.
 Converted originally from PowerShell to Csharp, and uses MahApps and WPF for UI.
 
 This app is not model specific, it will work across any model workstation.
+
+Link to Changelog.txt: https://github.com/ddamit1285/WS_Setup_6.UI/blob/main/WS_Setup_6.UI/Assets/CHANGE_LOG.txt
