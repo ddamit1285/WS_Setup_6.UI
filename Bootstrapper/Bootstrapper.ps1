@@ -244,7 +244,7 @@ try {
     $store.Close()
   }
 
-  # 6. Create desktop shortcut
+  # 6. Create desktop shortcut for WS.Setup.UI.exe
   Update-UI -Text "Creating desktop shortcut…" -Percent 90
   $desktop = [Environment]::GetFolderPath("Desktop")
   $lnkPath = Join-Path $desktop "Onboard.lnk"
