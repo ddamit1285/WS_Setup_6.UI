@@ -13,11 +13,13 @@ using System.Threading.Tasks;
 using WS_Setup_6.Common.Interfaces;
 using WS_Setup_6.Core.Interfaces;
 using WS_Setup_6.Core.Models;
+using WS_Setup_6.Common.Logging;
+using WS_Setup_6.Core.Services;
 
 namespace WS_Setup_6.Core.Services
 {
     [SupportedOSPlatform("windows")]
-    public partial class UninstallService(ILogService log) : IUninstallService
+    public partial class UninstallService : IUninstallService
     {
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -28,8 +30,16 @@ namespace WS_Setup_6.Core.Services
         /// </summary>
         /// ------------------------------------------------------------------------------------
 
-        // Logging service for tracking uninstall operations
-        private readonly ILogService _log = log ?? throw new ArgumentNullException(nameof(log));
+        private readonly ILogService _log;
+        private readonly IHelpersService _helpers;
+
+        // Single constructor assigning all readonly fields
+        public UninstallService(ILogService log, IHelpersService helpers)
+        {
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _helpers = helpers ?? throw new ArgumentNullException(nameof(helpers));
+        }
+
         // Registry paths to scan for installed applications
         private static readonly string[] registryUninstallPaths = new[]
         {
@@ -40,6 +50,7 @@ namespace WS_Setup_6.Core.Services
         // Regex to match GUIDs in the uninstall key names
         [GeneratedRegex(@"\{[A-F0-9\-]+\}", RegexOptions.IgnoreCase)]
         private static partial Regex GuidPattern();
+
 
         // 1) Query installed applications from the registry
         public async Task<IReadOnlyList<UninstallEntry>> QueryInstalledAppsAsync()
@@ -112,7 +123,7 @@ namespace WS_Setup_6.Core.Services
                 _log.Log("Phase 2: Running silent uninstall");
                 progress.Report(new UninstallProgress(UninstallPhase.RunningSilent));
 
-                var silentCmd = BuildSilentCommand(app.UninstallString);
+                var silentCmd = _helpers.BuildSilentCommand(app.UninstallString);
                 _log.Log($"Executing command: {silentCmd}", "DEBUG");
 
                 var exitCode = await RunProcessAsync(silentCmd, cancellationToken);
@@ -185,67 +196,6 @@ namespace WS_Setup_6.Core.Services
                     }
                 }
             }
-        }
-
-        // Build the silent uninstall command based on the uninstall string
-        private string BuildSilentCommand(string uninstallString)
-        {
-            if (string.IsNullOrWhiteSpace(uninstallString))
-                return string.Empty;
-
-            // 1) Split into exe path + existing args
-            //    Handles both: "C:\Foo\bar.exe" /uninstall /someflag
-            //    and:  msiexec.exe /x {GUID} /someflag
-            var firstSpace = uninstallString.IndexOf(' ');
-            string exePath;
-            string args;
-            if (firstSpace < 0)
-            {
-                exePath = uninstallString.Trim('"');
-                args = string.Empty;
-            }
-            else
-            {
-                exePath = uninstallString.Substring(0, firstSpace).Trim('"');
-                args = uninstallString.Substring(firstSpace + 1);
-            }
-
-            // 2) Lowercase for comparisons
-            var exeName = Path.GetFileName(exePath).ToLowerInvariant();
-            var sb = new StringBuilder();
-
-            // 3) Inject silent flags by type
-            if (exeName == "msiexec.exe" || exeName.EndsWith(".msi"))
-            {
-                // MSI based – use /qn (no UI), /norestart
-                // If the original command used /x or /i, keep it
-                if (!args.Contains("/qn")) sb.Append("/qn ");
-                if (!args.Contains("/norestart")) sb.Append("/norestart ");
-            }
-            else
-            {
-                // EXE-based – try common silent switches
-                // Inno Setup: /VERYSILENT /SUPPRESSMSGBOXES
-                if (!args.Contains("/silent", StringComparison.OrdinalIgnoreCase) &&
-                    !args.Contains("/verysilent", StringComparison.OrdinalIgnoreCase))
-                {
-                    sb.Append("/VERYSILENT /SUPPRESSMSGBOXES ");
-                }
-
-                // NSIS or InstallShield often support /S or -s
-                if (!args.Contains("/S ", StringComparison.Ordinal) &&
-                    !args.EndsWith("/S", StringComparison.Ordinal))
-                {
-                    sb.Append("/S ");
-                }
-            }
-
-            // 4) Append any existing arguments (so you don’t lose custom switches)
-            if (!string.IsNullOrWhiteSpace(args))
-                sb.Append(args);
-
-            // 5) Return quoted exe + final args
-            return $"\"{exePath}\" {sb.ToString().Trim()}";
         }
 
         // Generic method to run a command asynchronously

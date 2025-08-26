@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace WS_Setup_6.Core.Interfaces
@@ -40,5 +41,11 @@ namespace WS_Setup_6.Core.Interfaces
         /// whose filename starts with "NinjaOne-Agent", or null.
         /// </summary>
         string? FindAgentInstallerOnDesktop();
+
+        /// <summary>
+        /// Shared Build silent uninstaller logic for OEM removal.
+        /// </summary> 
+        // Build the silent uninstall command based on the uninstall string
+        string BuildSilentCommand(string uninstallString);
     }
 }

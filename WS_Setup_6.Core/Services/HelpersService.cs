@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Versioning;
+using System.Text;
 using System.Threading.Tasks;
 using WS_Setup_6.Core.Interfaces;
 
@@ -149,6 +150,68 @@ namespace WS_Setup_6.Core.Services
             {
                 return null;
             }
+        }
+
+        // Shared Build silent uninstall command logic for OEM removal.
+        // Build the silent uninstall command based on the uninstall string
+        public string BuildSilentCommand(string uninstallString)
+        {
+            if (string.IsNullOrWhiteSpace(uninstallString))
+                return string.Empty;
+
+            // 1) Split into exe path + existing args
+            //    Handles both: "C:\Foo\bar.exe" /uninstall /someflag
+            //    and:  msiexec.exe /x {GUID} /someflag
+            var firstSpace = uninstallString.IndexOf(' ');
+            string exePath;
+            string args;
+            if (firstSpace < 0)
+            {
+                exePath = uninstallString.Trim('"');
+                args = string.Empty;
+            }
+            else
+            {
+                exePath = uninstallString.Substring(0, firstSpace).Trim('"');
+                args = uninstallString.Substring(firstSpace + 1);
+            }
+
+            // 2) Lowercase for comparisons
+            var exeName = Path.GetFileName(exePath).ToLowerInvariant();
+            var sb = new StringBuilder();
+
+            // 3) Inject silent flags by type
+            if (exeName == "msiexec.exe" || exeName.EndsWith(".msi"))
+            {
+                // MSI based – use /qn (no UI), /norestart
+                // If the original command used /x or /i, keep it
+                if (!args.Contains("/qn")) sb.Append("/qn ");
+                if (!args.Contains("/norestart")) sb.Append("/norestart ");
+            }
+            else
+            {
+                // EXE-based – try common silent switches
+                // Inno Setup: /VERYSILENT /SUPPRESSMSGBOXES
+                if (!args.Contains("/silent", StringComparison.OrdinalIgnoreCase) &&
+                    !args.Contains("/verysilent", StringComparison.OrdinalIgnoreCase))
+                {
+                    sb.Append("/VERYSILENT /SUPPRESSMSGBOXES ");
+                }
+
+                // NSIS or InstallShield often support /S or -s
+                if (!args.Contains("/S ", StringComparison.Ordinal) &&
+                    !args.EndsWith("/S", StringComparison.Ordinal))
+                {
+                    sb.Append("/S ");
+                }
+            }
+
+            // 4) Append any existing arguments (so you don’t lose custom switches)
+            if (!string.IsNullOrWhiteSpace(args))
+                sb.Append(args);
+
+            // 5) Return quoted exe + final args
+            return $"\"{exePath}\" {sb.ToString().Trim()}";
         }
     }
 }
