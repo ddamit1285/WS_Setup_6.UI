@@ -1,6 +1,6 @@
 # Define paths
 $src  = 'C:\Users\dan\BootstrapperScript\BootstrapperScript\bootstrapper.ps1'
-$out  = 'C:\Users\dan\BootstrapperScript\BootstrapperScript\Bootstrapper.exe'
+$out  = 'C:\Users\dan\BootstrapperScript\BootstrapperScript\Setup.exe'
 $icon = 'C:\Users\dan\BootstrapperScript\BootstrapperScript\AdvTechLogo.ico'    # adjust if you have a custom icon
 
 # Compile to EXE (GUI-less, requires elevation)
