@@ -4,11 +4,11 @@
 
 .DESCRIPTION
   1. Finds its own folder at runtime (no $PSScriptRoot).
-  2. Copies WS.Setup.UI.exe and AdvTechLogo.ico into C:\Working.
+  2. Copies WS_Setup_6.UI.exe and AdvTechLogo.ico into C:\Working.
   3. Copies SignCode_Expires_20260709.pfx into C:\Working and hides it.
   4. Installs the PFX certificate into LocalMachine\Root and LocalMachine\TrustedPublisher.
      - If the certificate already exists, it skips re-importing.
-  5. Creates “Onboard” shortcut on the current user’s desktop linked to WS.Setup.UI.exe.
+  5. Creates “Onboard” shortcut on the current user’s desktop.
   6. Logs all actions to C:\Working\bootstrap.log.
 #>
 
@@ -16,6 +16,7 @@
 param(
   [string] $TargetDir = "C:\Working",
   [string] $AppName   = "WS.Setup.UI.exe",
+  [string] $Assets    = "$TargetDir\Assets",
   [string] $IconName  = "AdvTechLogo.ico",
   [string] $PfxName   = "SignCode_Expires_20260709.pfx",
   [string] $PfxPass   = "St@ff1234!",
@@ -127,6 +128,7 @@ $fade      = New-Object Windows.Media.Animation.DoubleAnimation(0,1,[TimeSpan]::
 $dispatcher= [System.Windows.Threading.Dispatcher]::CurrentDispatcher
 
 # 3) Wire up window dragging and close button
+#    (call these right after your Initialize-UI routine)
 $window.add_MouseLeftButtonDown({
     param($s,$e)
     if ($e.ChangedButton -eq 'Left') { $window.DragMove() }
@@ -198,6 +200,11 @@ try {
   Copy-Item (Join-Path $exeDir $AppName) (Join-Path $TargetDir $AppName) -Force
   Write-Log "Copied $AppName"
 
+    # 2.1 Copy Assets folder
+    Update-UI -Text "Copying assets…" -Percent 30
+    Copy-Item (Join-Path $exeDir "Assets") (Join-Path $TargetDir "Assets") -Recurse -Force
+    Write-Log "Copied Assets folder"
+
   # 3. Copy ICO
   Update-UI -Text "Copying icon…" -Percent 40
   $srcIcon  = Join-Path $exeDir $IconName
@@ -244,7 +251,7 @@ try {
     $store.Close()
   }
 
-  # 6. Create desktop shortcut for WS.Setup.UI.exe
+  # 6. Create desktop shortcut
   Update-UI -Text "Creating desktop shortcut…" -Percent 90
   $desktop = [Environment]::GetFolderPath("Desktop")
   $lnkPath = Join-Path $desktop "Onboard.lnk"
