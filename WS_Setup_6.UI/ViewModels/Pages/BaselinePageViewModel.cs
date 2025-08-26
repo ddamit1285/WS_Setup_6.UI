@@ -106,7 +106,7 @@ namespace WS_Setup_6.UI.ViewModels.Pages
         private void UpdateEllipsis(object? sender, EventArgs e)
         {
             _dotCount = (_dotCount + 1) % 4;
-            WaitMessage = "Please be patient" + new string('.', _dotCount);
+            WaitMessage = _waitMessage + new string('.', _dotCount);
             _progressController?.SetMessage(WaitMessage);
         }
 
