@@ -20,7 +20,7 @@
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<SelfContained>true</SelfContained>
 		<PublishSingleFile>true</PublishSingleFile>
-		<IncludeAllContentForSelfExtract>false</IncludeAllContentForSelfExtract>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<SignAssembly>true</SignAssembly>
@@ -37,7 +37,7 @@
 	<!-- 7. Static Assets: copy everything under Assets\ to output -->
 	<ItemGroup>
 		<Content Include="Assets\**\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 

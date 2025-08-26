@@ -16,8 +16,9 @@ namespace WS_Setup_6.UI.ViewModels.Pages
     [SupportedOSPlatform("windows")]
     public partial class BaselinePageViewModel : ObservableObject
     {
-        private ProgressDialogController? _progressController;
+        private const string DialogContextKey = "MainHost";
 
+        private ProgressDialogController? _progressController;
         private readonly MainWindowModel _shell;
         private readonly IOnboardService _onboard;
         private readonly IBaselineService _baseline;
@@ -32,7 +33,7 @@ namespace WS_Setup_6.UI.ViewModels.Pages
         private readonly byte[] _iv;
 
         private DispatcherTimer _ellipsisTimer;
-        private int _dotCount = 0;
+        private int _dotCount;
 
         private string _waitMessage = "Please be patient";
         public string WaitMessage
@@ -79,16 +80,10 @@ namespace WS_Setup_6.UI.ViewModels.Pages
             {
                 Interval = TimeSpan.FromMilliseconds(500)
             };
-            _ellipsisTimer.Tick += (s, e) =>
-            {
-                _dotCount = (_dotCount + 1) % 4;
-                WaitMessage = "Please be patient" + new string('.', _dotCount);
-                _progressController?.SetMessage(WaitMessage);
-            };
+            _ellipsisTimer.Tick += UpdateEllipsis;
 
             var baseDir = AppContext.BaseDirectory;
             var assets = Path.Combine(baseDir, "Assets");
-
             _encYaml = Path.Combine(assets, "WSConfig_encrypted.yml");
             _decYaml = Path.Combine(baseDir, "WSConfig.yml");
             _key = Convert.FromBase64String("+9s4TlWmueWkzQwuDZ1tOA==");
@@ -96,119 +91,104 @@ namespace WS_Setup_6.UI.ViewModels.Pages
 
             ApplyBaselineCommand = new AsyncRelayCommand(
                 ApplyBaselineAsync,
-                () => CanApplyBaseline
-            );
+                () => CanApplyBaseline);
         }
 
         partial void OnIsApplyingBaselineChanged(bool oldValue, bool newValue) =>
             ApplyBaselineCommand.NotifyCanExecuteChanged();
 
+        private void OnShellPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(_shell.IsApplyingBaseline))
+                OnPropertyChanged(nameof(IsApplyEnabled));
+        }
+
+        private void UpdateEllipsis(object? sender, EventArgs e)
+        {
+            _dotCount = (_dotCount + 1) % 4;
+            WaitMessage = "Please be patient" + new string('.', _dotCount);
+            _progressController?.SetMessage(WaitMessage);
+        }
+
         private async Task ApplyBaselineAsync()
         {
             _shell.IsApplyingBaseline = true;
-            bool hadErrors = false;
+            var hadErrors = false;
 
             // Show a progress dialog on the MainWindow
             _progressController = await _dialog.ShowProgressAsync(
-                "MainHost",
+                DialogContextKey,
                 "Applying Baseline Configuration",
                 "Initializing…",
                 false,
                 new MetroDialogSettings { AnimateShow = true });
 
-            // ① Prepare
-            _ellipsisTimer.Start();
-            _progressController.SetMessage("Setting up dependencies…");
-            ProgressValue = 50;
-            _log.Log("Installing dependencies", "INFO");
-            await _onboard.SetupDependenciesAsync();
-
-            await Task.Yield();
-
-            _progressController.SetMessage("Installing Desired State Configuration v3…");
-            ProgressValue = 60;
-            _log.Log("Installing DSC v3", "INFO");
-            await _onboard.InstallDsc3Async();
-            _progressController.SetMessage("Decrypting baseline configuration");
-            _log.Log("Decrypting baseline configuration", "INFO");
             try
             {
+                _ellipsisTimer.Start();
+                ProgressValue = 50;
+                _log.Log("Installing dependencies", "INFO");
+                await _onboard.SetupDependenciesAsync();
+
+                _progressController.SetMessage("Installing Desired State Configuration v3…");
+                ProgressValue = 60;
+                _log.Log("Installing DSC v3", "INFO");
+                await _onboard.InstallDsc3Async();
+
+                _progressController.SetMessage("Decrypting baseline configuration");
+                _log.Log("Decrypting baseline configuration", "INFO");
                 _baseline.DecryptConfig(_encYaml, _decYaml, _key, _iv);
+
+                ProgressValue = 70;
+                await Task.Yield();
+
+                if (File.Exists(_decYaml))
+                {
+                    ProgressValue = 85;
+                    _log.Log("Applying baseline via DSC", "INFO");
+                    await _baseline.RunDscSimpleAsync(_decYaml);
+                }
+                else
+                {
+                    hadErrors = true;
+                    await ShowDialogAsync("Configuration Error",
+                        "The decrypted configuration file could not be found. Please check the log for details.");
+                }
             }
             catch (Exception ex)
             {
-                _log.Log($"Decryption failed: {ex.Message}", "ERROR");
-                await _dialog.ShowMessageAsync(
-                    this,
-                    "Decryption Error",
-                    ex.Message,
-                    MessageDialogStyle.Affirmative);
                 hadErrors = true;
+                _log.Log($"Baseline process failed: {ex.Message}", "ERROR");
+                await ShowDialogAsync("Baseline Error", ex.Message);
             }
-
-            ProgressValue = 70;
-
-            await Task.Yield();
-
-            // ② Apply via DSC
-            if (File.Exists(_decYaml))
+            finally
             {
-                ProgressValue = 85;
-                _log.Log("Applying baseline via DSC", "INFO");
+                _helpers.TryDelete(_decYaml, msg => _log.Log(msg, "INFO"));
+                ProgressValue = 90;
+                _progressController.SetMessage(
+                    hadErrors ? "Baseline applied with errors." : "Baseline applied successfully.");
+                ProgressValue = 100;
 
-                try
-                {
-                    await _baseline.RunDscSimpleAsync(_decYaml);
-                }
-                catch (Exception ex)
-                {
-                    _log.Log($"DSC application failed: {ex.Message}", "ERROR");
-                    await _dialog.ShowMessageAsync(
-                        this,
-                        "Baseline Error",
-                        ex.Message,
-                        MessageDialogStyle.Affirmative);
-                    hadErrors = true;
-                }
-            }
-            else
-            {
-                await _dialog.ShowMessageAsync(
-                    this,
-                    "Configuration Error",
-                    "The decrypted configuration file could not be found. Please check the log for details.",
-                    MessageDialogStyle.Affirmative);
-                hadErrors = true;
-            }
+                _ellipsisTimer.Stop();
+                _dotCount = 0;
+                WaitMessage = "Please be patient";
 
-            // ③ Cleanup
-            _helpers.TryDelete(_decYaml, msg => _log.Log(msg, "INFO"));
-            ProgressValue = 90;
-            _progressController.SetMessage(
-                hadErrors
-                    ? "Baseline applied with errors."
-                    : "Baseline applied successfully."
-            );
-            ProgressValue = 100;
-            _shell.IsApplyingBaseline = false;
-            _ellipsisTimer.Stop();
-            _dotCount = 0;
-            WaitMessage = "Please be patient";
-            await Task.Delay(2000);
-            if (_progressController.IsOpen)
-            {
-                await _progressController.CloseAsync();
+                _shell.IsApplyingBaseline = false;
+                await Task.Delay(2000);
+
+                if (_progressController.IsOpen)
+                    await _progressController.CloseAsync();
+
+                BaselineStatusMessage = "Baseline run complete."
+                    + (hadErrors ? " (with errors)" : string.Empty);
             }
-            BaselineStatusMessage = "Baseline run complete." + (hadErrors ? " (with errors)" : string.Empty);
         }
 
-        // Listen to MainWindowModel changes
-        private void OnShellPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(_shell.IsApplyingBaseline))
-            {
-                OnPropertyChanged(nameof(IsApplyEnabled));
-            }
-        }
+        private Task ShowDialogAsync(string title, string message) =>
+            _dialog.ShowMessageAsync(
+                DialogContextKey,
+                title,
+                message,
+                MessageDialogStyle.Affirmative);
     }
 }
