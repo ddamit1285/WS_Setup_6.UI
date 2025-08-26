@@ -1,10 +1,9 @@
 ﻿// App.xaml.cs
-using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Windows;
+using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Extensions.DependencyInjection;
 using WS_Setup_6.Common.Interfaces;
 using WS_Setup_6.Common.Logging;
 using WS_Setup_6.Core.Interfaces;
