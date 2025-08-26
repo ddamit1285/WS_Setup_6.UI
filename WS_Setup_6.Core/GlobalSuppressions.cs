@@ -12,3 +12,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~F:WS_Setup_6.Core.Services.NavigationService._routes")]
 [assembly: SuppressMessage("Style", "IDE0300:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~M:WS_Setup_6.Core.Services.UninstallService.GuessProcessNames(System.String)~System.String[]")]
 [assembly: SuppressMessage("Style", "IDE0300:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~F:WS_Setup_6.Core.Services.UninstallService.registryUninstallPaths")]
+[assembly: SuppressMessage("Style", "IDE0300:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~F:WS_Setup_6.Core.Services.OemRemovalHelper.DellPatterns")]
+[assembly: SuppressMessage("Style", "IDE0300:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~F:WS_Setup_6.Core.Services.RegistryUninstallScanner._registryUninstallPaths")]
+[assembly: SuppressMessage("Style", "IDE0300:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~M:WS_Setup_6.Core.Services.RegistryUninstallScanner.GuessProcessNames(System.String)~System.String[]")]

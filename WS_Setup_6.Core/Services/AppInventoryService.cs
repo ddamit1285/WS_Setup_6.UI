@@ -6,14 +6,9 @@ using WS_Setup_6.Core.Models;
 
 namespace WS_Setup_6.Core.Services
 {
-    public class AppInventoryService : IAppInventoryService
+    public class AppInventoryService(IUninstallScanner scanner) : IAppInventoryService
     {
-        private readonly IUninstallScanner _scanner;
-
-        public AppInventoryService(IUninstallScanner scanner)
-        {
-            _scanner = scanner;
-        }
+        private readonly IUninstallScanner _scanner = scanner;
 
         // Note: The scanner itself handles async work internally
         public async Task<IReadOnlyList<UninstallEntry>> ScanInstalledAppsAsync()
