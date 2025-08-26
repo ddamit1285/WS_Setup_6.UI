@@ -82,7 +82,7 @@ namespace WS_Setup_6.UI.ViewModels.Pages
             };
             _ellipsisTimer.Tick += UpdateEllipsis;
 
-            var baseDir = AppContext.BaseDirectory;
+            var baseDir = Directory.GetCurrentDirectory();
             var assets = Path.Combine(baseDir, "Assets");
             _encYaml = Path.Combine(assets, "WSConfig_encrypted.yml");
             _decYaml = Path.Combine(baseDir, "WSConfig.yml");

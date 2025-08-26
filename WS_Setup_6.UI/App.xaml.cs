@@ -43,7 +43,7 @@ namespace WS_Setup_6.UI
             // Logging
             services.AddSingleton<ILogServiceWithHistory>(sp =>
             {
-                var baseDir = AppContext.BaseDirectory;
+                var baseDir = Directory.GetCurrentDirectory();
                 var logPath = Path.Combine(baseDir, "onboard.log");
                 return new LogManager(logPath);
             });

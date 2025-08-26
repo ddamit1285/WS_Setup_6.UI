@@ -20,7 +20,7 @@ namespace WS_Setup_6.Core.Services
     [SupportedOSPlatform("windows")]
     public class OnboardService : IOnboardService
     {
-        private static readonly string _baseDir = AppContext.BaseDirectory;
+        private static readonly string _baseDir = Directory.GetCurrentDirectory();
         private static string AssetsDir => Path.Combine(_baseDir, "Assets");
 
         private readonly ILogService _log;
@@ -116,7 +116,7 @@ namespace WS_Setup_6.Core.Services
             }
 
             // target the .NET single-file extraction folder
-            string extractionDir = AppContext.BaseDirectory;
+            string extractionDir = Directory.GetCurrentDirectory();
             var tempMsi = Path.Combine(extractionDir, "ChromeStandalone.msi");
             _log.Log($"Downloading Chrome MSI to {tempMsi}…", "INFO");
 
@@ -327,7 +327,7 @@ namespace WS_Setup_6.Core.Services
                 }
 
                 // 2) Download into the .NET single-file extraction folder
-                var downloadDir = AppContext.BaseDirectory;
+                var downloadDir = Directory.GetCurrentDirectory();
                 Directory.CreateDirectory(downloadDir);
 
                 var msiName = Path.GetFileName(new Uri(asset.Url).LocalPath)!;
