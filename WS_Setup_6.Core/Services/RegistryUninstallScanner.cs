@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using WS_Setup_6.Core.Interfaces;
 using WS_Setup_6.Core.Models;
 using System.Text.RegularExpressions;
+using System.Runtime.Versioning;
 
 namespace WS_Setup_6.Core.Services
 {
+    [SupportedOSPlatform("windows")]
     public partial class RegistryUninstallScanner : IUninstallScanner
     {
         private static readonly Regex _guidRegex = RegexHelpers.GuidPattern();
