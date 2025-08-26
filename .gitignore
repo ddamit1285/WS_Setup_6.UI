@@ -12,3 +12,4 @@ obj/
 *.snk
 *.sln
 AcroRdrInstaller.exe
+Settings.settings

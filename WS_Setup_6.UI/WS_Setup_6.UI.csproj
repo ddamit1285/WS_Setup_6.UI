@@ -20,7 +20,7 @@
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<SelfContained>true</SelfContained>
 		<PublishSingleFile>true</PublishSingleFile>
-		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<IncludeAllContentForSelfExtract>false</IncludeAllContentForSelfExtract>
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<SignAssembly>true</SignAssembly>
@@ -30,6 +30,7 @@
 
 		<!-- 3. Custom Version Stamp: 6.5.yyMM.ddHH -->
 		<Version>6.7.$([System.DateTime]::Now.ToString("yyMM")).$([System.DateTime]::Now.ToString("ddHH"))</Version>
+		<StartupObject>WS_Setup_6.UI.App</StartupObject>
 
 	</PropertyGroup>
 
