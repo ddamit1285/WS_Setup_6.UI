@@ -162,7 +162,7 @@ namespace WS_Setup_6.Core.Services
         }
 
         // Runs a process asynchronously, capturing output and errors
-        public static Task<int> RunProcessAsync(
+        private static Task<int> RunProcessAsync(
         string exePath,
         string args,
         Action<string> onOutput,
@@ -216,7 +216,7 @@ namespace WS_Setup_6.Core.Services
         }
 
         // 🔹 New convenience overload: accepts a single full command line
-        public static Task<int> RunProcessAsync(
+        private static Task<int> RunProcessAsync(
             string fullCommandLine,
             bool useShellExecute = false,
             string? verb = null) =>

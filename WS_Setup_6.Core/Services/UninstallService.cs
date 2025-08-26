@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.ServiceProcess;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -187,27 +188,64 @@ namespace WS_Setup_6.Core.Services
         }
 
         // Build the silent uninstall command based on the uninstall string
-        private static string BuildSilentCommand(string uninstallString)
+        private string BuildSilentCommand(string uninstallString)
         {
-            // Split into exe + args
+            if (string.IsNullOrWhiteSpace(uninstallString))
+                return string.Empty;
+
+            // 1) Split into exe path + existing args
+            //    Handles both: "C:\Foo\bar.exe" /uninstall /someflag
+            //    and:  msiexec.exe /x {GUID} /someflag
             var firstSpace = uninstallString.IndexOf(' ');
-            var exe = firstSpace > 0
-                ? uninstallString[..firstSpace]
-                : uninstallString;
-            var args = firstSpace > 0
-                ? uninstallString[(firstSpace + 1)..]
-                : "";
-
-            exe = exe.Trim('"'); // remove quotes
-
-            // MSI
-            if (exe.EndsWith("msiexec", StringComparison.OrdinalIgnoreCase))
+            string exePath;
+            string args;
+            if (firstSpace < 0)
             {
-                return $"{exe} {args} /qn /norestart";
+                exePath = uninstallString.Trim('"');
+                args = string.Empty;
+            }
+            else
+            {
+                exePath = uninstallString.Substring(0, firstSpace).Trim('"');
+                args = uninstallString.Substring(firstSpace + 1);
             }
 
-            // InnoSetup / some vendor EXEs
-            return $"{uninstallString} /quiet";
+            // 2) Lowercase for comparisons
+            var exeName = Path.GetFileName(exePath).ToLowerInvariant();
+            var sb = new StringBuilder();
+
+            // 3) Inject silent flags by type
+            if (exeName == "msiexec.exe" || exeName.EndsWith(".msi"))
+            {
+                // MSI based – use /qn (no UI), /norestart
+                // If the original command used /x or /i, keep it
+                if (!args.Contains("/qn")) sb.Append("/qn ");
+                if (!args.Contains("/norestart")) sb.Append("/norestart ");
+            }
+            else
+            {
+                // EXE-based – try common silent switches
+                // Inno Setup: /VERYSILENT /SUPPRESSMSGBOXES
+                if (!args.Contains("/silent", StringComparison.OrdinalIgnoreCase) &&
+                    !args.Contains("/verysilent", StringComparison.OrdinalIgnoreCase))
+                {
+                    sb.Append("/VERYSILENT /SUPPRESSMSGBOXES ");
+                }
+
+                // NSIS or InstallShield often support /S or -s
+                if (!args.Contains("/S ", StringComparison.Ordinal) &&
+                    !args.EndsWith("/S", StringComparison.Ordinal))
+                {
+                    sb.Append("/S ");
+                }
+            }
+
+            // 4) Append any existing arguments (so you don’t lose custom switches)
+            if (!string.IsNullOrWhiteSpace(args))
+                sb.Append(args);
+
+            // 5) Return quoted exe + final args
+            return $"\"{exePath}\" {sb.ToString().Trim()}";
         }
 
         // Generic method to run a command asynchronously
