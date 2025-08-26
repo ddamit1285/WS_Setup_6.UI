@@ -12,14 +12,9 @@ using WS_Setup_6.Core.Interfaces;
 namespace WS_Setup_6.Core.Services
 {
     [SupportedOSPlatform("windows")]
-    public class HelpersService(
-        IOnboardService onboardService,
-        IDomainCredentialsDialogService credsDialog,
-        IDialogCoordinator dialogs) : IHelpersService
+    public class HelpersService(IOnboardService onboardService) : IHelpersService
     {
         private readonly IOnboardService _onboardSvc = onboardService;
-        private readonly IDomainCredentialsDialogService _credsDialog = credsDialog;
-        private readonly IDialogCoordinator _dialogs = dialogs;
 
         // Validates the installer path, checking if it's local or a UNC share.
         /// <summary>
