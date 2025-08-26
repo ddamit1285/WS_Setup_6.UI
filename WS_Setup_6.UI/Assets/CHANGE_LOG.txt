@@ -38,3 +38,7 @@ C# and .NET8.0
 20250824: Refactored to extract Baseline Service to its own class library project - and its own tab.
 --Also refactored Uninstaller service to a third button in the Uninstall tab that purges all Dell software that the first pass doesn't get.
 --Also added a few more Dell packages to the Uninstall list.
+
+20250826: Changed build-time to exclude Assets content in the single-file exe to speed up cold starts on now workstations
+--Also updated Bootstrapper script to copy the assets to C:\Working to avoid issues with codebase looking for Assets at runtime.
+--Also changed name of Bootstrapper.exe to Setup.exe
