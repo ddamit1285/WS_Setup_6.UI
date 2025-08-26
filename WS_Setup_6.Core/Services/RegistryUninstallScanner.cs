@@ -10,21 +10,16 @@ using System.Text.RegularExpressions;
 
 namespace WS_Setup_6.Core.Services
 {
-    public class RegistryUninstallScanner : IUninstallScanner
+    public partial class RegistryUninstallScanner : IUninstallScanner
     {
+        private static readonly Regex _guidRegex = RegexHelpers.GuidPattern();
+
         // Both 64-bit and 32-bit uninstall registry paths
         private static readonly string[] _registryUninstallPaths =
         {
             @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
             @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
         };
-
-        // Compiled regex for GUID matching
-        private static Regex GuidPattern()
-        {
-            return new Regex(@"\{?[0-9A-Fa-f]{8}\-[0-9A-Fa-f]{4}\-[0-9A-Fa-f]{4}\-[0-9A-Fa-f]{4}\-[0-9A-Fa-f]{12}\}?",
-                             RegexOptions.Compiled);
-        }
 
         // Main scanning method
         public async Task<IReadOnlyList<UninstallEntry>> ScanInstalledAppsAsync()
@@ -78,8 +73,7 @@ namespace WS_Setup_6.Core.Services
         // You can reuse your existing helpers here or inject them instead
         private static string? TryExtractGuid(string rawKeyName)
         {
-            // Your existing GUID regex matcher here
-            var m = GuidPattern().Match(rawKeyName);
+            var m = _guidRegex.Match(rawKeyName);
             return m.Success ? m.Value : null;
         }
 
