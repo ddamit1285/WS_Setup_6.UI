@@ -1,14 +1,16 @@
 ﻿<#
 .SYNOPSIS
   Bootstrapper EXE that deploys the onboarding UI and desktop shortcut.
+  Also moves Assets now required on disk as well.
 
 .DESCRIPTION
   1. Finds its own folder at runtime (no $PSScriptRoot).
   2. Copies WS_Setup_6.UI.exe and AdvTechLogo.ico into C:\Working.
+    2.1 Copies Assets now as well after removing Assets from exe at build time.
   3. Copies SignCode_Expires_20260709.pfx into C:\Working and hides it.
   4. Installs the PFX certificate into LocalMachine\Root and LocalMachine\TrustedPublisher.
      - If the certificate already exists, it skips re-importing.
-  5. Creates “Onboard” shortcut on the current user’s desktop.
+  5. Creates “Onboard” shortcut on the current user’s desktop linked to WS.SetupUI.exe.
   6. Logs all actions to C:\Working\bootstrap.log.
 #>
 
