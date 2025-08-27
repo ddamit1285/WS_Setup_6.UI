@@ -187,8 +187,8 @@ namespace WS_Setup_6.Core.Services
             return $"\"{exePath}\" {sb.ToString().Trim()}";
         }
 
-        // Splits a command line into executable path and arguments.
-        public static (string exePath, string parsedArgs) SplitCommandLine(string uninstallString)
+        // Splits a command line into executable path and arguments for BuildSilentCommand().
+        private static (string exePath, string parsedArgs) SplitCommandLine(string uninstallString)
         {
             if (string.IsNullOrWhiteSpace(uninstallString))
                 return (string.Empty, string.Empty);
