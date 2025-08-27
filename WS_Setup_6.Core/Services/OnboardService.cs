@@ -20,7 +20,7 @@ namespace WS_Setup_6.Core.Services
     [SupportedOSPlatform("windows")]
     public class OnboardService : IOnboardService
     {
-        private static readonly string _baseDir = Directory.GetCurrentDirectory();
+        private static readonly string _baseDir = AppDomain.CurrentDomain.BaseDirectory;
         private static string AssetsDir => Path.Combine(_baseDir, "Assets");
 
         private readonly ILogService _log;
@@ -116,7 +116,7 @@ namespace WS_Setup_6.Core.Services
             }
 
             // target the .NET single-file extraction folder
-            string extractionDir = Directory.GetCurrentDirectory();
+            string extractionDir = AppDomain.CurrentDomain.BaseDirectory;
             var tempMsi = Path.Combine(extractionDir, "ChromeStandalone.msi");
             _log.Log($"Downloading Chrome MSI to {tempMsi}…", "INFO");
 
@@ -163,45 +163,83 @@ namespace WS_Setup_6.Core.Services
             _log.Log($"Chrome MSI exited with code {proc.ExitCode}", "INFO");
         }
 
-        // Installs Adobe Reader from the bundled installer in the Assets folder
-        public async Task InstallAdobeReaderAsync()
-        {
-            if (IsAdobeReaderInstalled())
-            {
-                _log.Log("Adobe Reader already installed.", "INFO");
-                return;
-            }
+		public async Task InstallAdobeReaderAsync()
+		{
+			// 0. Short-circuit if already installed
+			if (IsAdobeReaderInstalled())
+			{
+				_log.Log("Adobe Reader already installed.", "INFO");
+				return;
+			}
 
-            var installerPath = Path.Combine(AssetsDir, "AcroRdrInstaller.exe");
-            _log.Log($"Looking for Adobe Reader installer at: {installerPath}", "INFO");
+			// 1. Fetch latest Adobe Reader asset from your GitHub Releases
+			_log.Log("Fetching Adobe Reader release info…", "INFO");
+			using var http = new HttpClient();
+			http.DefaultRequestHeaders.UserAgent.ParseAdd("AdvTechSetup");
 
-            if (!File.Exists(installerPath))
-            {
-                _log.Log("Acrobat Reader installer not found in Assets folder.", "ERROR");
-                return;
-            }
+			var apiUrl =
+			  "https://api.github.com/repos/ddamit1285/advtech-deploy-assets/releases/latest";
+			var json = await http.GetStringAsync(apiUrl);
+			using var doc = JsonDocument.Parse(json);
 
-            var psi = new ProcessStartInfo
-            {
-                FileName = installerPath,
-                Arguments = "/sAll /rs /rps /msi EULA_ACCEPT=YES",
-                WorkingDirectory = Path.GetDirectoryName(installerPath),
-                UseShellExecute = true,
-                Verb = "runas",
-                CreateNoWindow = true
-            };
+			var asset = doc.RootElement
+				.GetProperty("assets")
+				.EnumerateArray()
+				.Select(a => new
+				{
+					Name = a.GetProperty("name").GetString()!,
+					Url = a.GetProperty("browser_download_url").GetString()!
+				})
+				.FirstOrDefault(x =>
+					x.Name.Equals("AcroRdrInstaller.exe",
+								  StringComparison.OrdinalIgnoreCase));
 
-            _log.Log("Launching Adobe Reader installer…", "INFO");
+			if (asset == null)
+			{
+				_log.Log("Could not locate AcroRdrInstaller.exe in GitHub assets.", "ERROR");
+				return;
+			}
 
-            using var proc = Process.Start(psi)!;
-            await proc.WaitForExitAsync().ConfigureAwait(false);
+			// 2. Ensure AssetsDir exists and compute local path
+			Directory.CreateDirectory(AssetsDir);
+			var installerPath = Path.Combine(AssetsDir, asset.Name);
+			_log.Log($"Installer will live at: {installerPath}", "INFO");
 
-            _log.Log($"Adobe Reader installer exited with code {proc.ExitCode}", "INFO");
-            _log.Log("Adobe Reader installation complete.", "INFO");
-        }
+			// 3. Download if missing
+			if (!File.Exists(installerPath))
+			{
+				_log.Log($"Downloading {asset.Name} from GitHub…", "INFO");
+				using var response = await http.GetAsync(asset.Url);
+				response.EnsureSuccessStatusCode();
 
-        // Sets up dependencies: PowerShell 7, network profile, PS remoting
-        public async Task SetupDependenciesAsync()
+				await using var fs = new FileStream(
+					installerPath, FileMode.Create, FileAccess.Write, FileShare.None);
+				await response.Content.CopyToAsync(fs);
+
+				_log.Log("Download complete.", "INFO");
+			}
+
+			// 4. Launch installer silently with elevated rights
+			var psi = new ProcessStartInfo
+			{
+				FileName = installerPath,
+				Arguments = "/sAll /rs /rps /msi EULA_ACCEPT=YES",
+				WorkingDirectory = AssetsDir,
+				UseShellExecute = true,
+				Verb = "runas",
+				CreateNoWindow = true
+			};
+
+			_log.Log("Launching Adobe Reader installer…", "INFO");
+			using var proc = Process.Start(psi)!;
+			await proc.WaitForExitAsync().ConfigureAwait(false);
+
+			_log.Log($"Installer exited with code {proc.ExitCode}", "INFO");
+			_log.Log("Adobe Reader installation complete.", "INFO");
+		}
+
+		// Sets up dependencies: PowerShell 7, network profile, PS remoting
+		public async Task SetupDependenciesAsync()
         {
             // Ensure PowerShell 7 is installed
             _log.Log("Checking PowerShell 7…", "INFO");
@@ -327,7 +365,7 @@ namespace WS_Setup_6.Core.Services
                 }
 
                 // 2) Download into the .NET single-file extraction folder
-                var downloadDir = Directory.GetCurrentDirectory();
+                var downloadDir = AppDomain.CurrentDomain.BaseDirectory;
                 Directory.CreateDirectory(downloadDir);
 
                 var msiName = Path.GetFileName(new Uri(asset.Url).LocalPath)!;

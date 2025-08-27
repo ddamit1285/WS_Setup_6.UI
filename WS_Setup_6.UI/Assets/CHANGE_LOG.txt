@@ -42,3 +42,13 @@ C# and .NET8.0
 20250826: Changed build-time to exclude Assets content in the single-file exe to speed up cold starts on new workstations
 --Also updated Bootstrapper script to copy the assets to C:\Working to avoid issues with codebase looking for Assets at runtime.
 --Also changed name of Bootstrapper.exe to Setup.exe
+
+----Refactored everything to remove SingleFile to reduce file size and complexity.
+----Adjusted Bootstrapper script to copy the Assets folder to C:\Working\Assets
+----Adjusted code to look for Assets in C:\Working\Assets
+----Using NSIS to create a single installer exe from a .zip of Publish that extracts everything to C:\Working and runs Setup.exe from there.
+----Adjusted to just include English language for now to reduce complexity.
+
+--Ditched the NSIS route and uploaded AcroRdrInstaller.exe to a web location to reduce complexity and file size.
+----github.com releases hosts the large AcroRdrInstaller.exe file.
+----Refactored the Adobe installer to download from the web location instead of looking in Assets.

@@ -23,7 +23,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Image Source="/Assets/AdvTechLogo.png"
+                <Image x:Name="LogoImage"
                        Height="32"
                        VerticalAlignment="Center"
                        Margin="16,0" />
@@ -71,11 +71,11 @@
                     VerticalAlignment="Bottom"
                     Margin="16" />
         </Grid>
-        <Image Source="/Assets/AdvTechLogo.png"
+        <Image x:Name="LogoImage"
                Opacity="0.15"
                Stretch="Uniform"
-               Width="500"
-               Height="500"
+               MaxWidth="500"
+               MaxHeight="500"
                HorizontalAlignment="Right"
                VerticalAlignment="Bottom"
                Margin="0,0,20,20"

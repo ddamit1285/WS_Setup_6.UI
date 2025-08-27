@@ -1,9 +1,10 @@
 ﻿// App.xaml.cs
+using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Windows;
-using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Extensions.DependencyInjection;
 using WS_Setup_6.Common.Interfaces;
 using WS_Setup_6.Common.Logging;
 using WS_Setup_6.Core.Interfaces;
@@ -43,7 +44,8 @@ namespace WS_Setup_6.UI
             // Logging
             services.AddSingleton<ILogServiceWithHistory>(sp =>
             {
-                var baseDir = Directory.GetCurrentDirectory();
+                var exePath = Environment.ProcessPath;
+                var baseDir = Path.GetDirectoryName(exePath)!;
                 var logPath = Path.Combine(baseDir, "onboard.log");
                 return new LogManager(logPath);
             });

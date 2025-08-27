@@ -67,7 +67,7 @@ namespace WS_Setup_6.UI.ViewModels.Pages
             _dialogCoordinator = dialogCoordinator;
             _helpers = helpers;
 
-            var baseDir = Directory.GetCurrentDirectory();
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             var assets = Path.Combine(baseDir, "Assets");
 
         // ── Auto-seed Installer Path if found ────────────────────────────

@@ -82,7 +82,7 @@ namespace WS_Setup_6.UI.ViewModels.Pages
             };
             _ellipsisTimer.Tick += UpdateEllipsis;
 
-            var baseDir = Directory.GetCurrentDirectory();
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             var assets = Path.Combine(baseDir, "Assets");
             _encYaml = Path.Combine(assets, "WSConfig_encrypted.yml");
             _decYaml = Path.Combine(baseDir, "WSConfig.yml");
@@ -106,7 +106,7 @@ namespace WS_Setup_6.UI.ViewModels.Pages
         private void UpdateEllipsis(object? sender, EventArgs e)
         {
             _dotCount = (_dotCount + 1) % 4;
-            WaitMessage = _waitMessage + new string('.', _dotCount);
+            WaitMessage = "Please be patient." + new string('.', _dotCount);
             _progressController?.SetMessage(WaitMessage);
         }
 

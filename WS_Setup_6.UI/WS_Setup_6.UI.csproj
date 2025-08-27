@@ -20,11 +20,12 @@
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<SelfContained>true</SelfContained>
 		<PublishSingleFile>true</PublishSingleFile>
+		<PublishReadyToRun>true</PublishReadyToRun>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-		<PublishReadyToRun>true</PublishReadyToRun>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>MyKey.snk</AssemblyOriginatorKeyFile>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<!-- <PublishTrimmed>true</PublishTrimmed> -->
 		<!-- enable only after reflection testing -->
 
@@ -37,7 +38,8 @@
 	<!-- 7. Static Assets: copy everything under Assets\ to output -->
 	<ItemGroup>
 		<Content Include="Assets\**\*">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
 		</Content>
 	</ItemGroup>
 
