@@ -154,46 +154,26 @@ namespace WS_Setup_6.Core.Services
             if (string.IsNullOrWhiteSpace(uninstallString))
                 return string.Empty;
 
-            // 1) Split into exe path + existing args
-            //    Handles both: "C:\Foo\bar.exe" /uninstall /someflag
-            //    and:  msiexec.exe /x {GUID} /someflag
-            var firstSpace = uninstallString.IndexOf(' ');
-            string exePath;
-            string args;
-            if (firstSpace < 0)
-            {
-                exePath = uninstallString.Trim('"');
-                args = string.Empty;
-            }
-            else
-            {
-                exePath = uninstallString.Substring(0, firstSpace).Trim('"');
-                args = uninstallString.Substring(firstSpace + 1);
-            }
+            var (exePath, args) = SplitCommandLine(uninstallString);
 
-            // 2) Lowercase for comparisons
             var exeName = Path.GetFileName(exePath).ToLowerInvariant();
             var sb = new StringBuilder();
 
-            // 3) Inject silent flags by type
             if (exeName == "msiexec.exe" || exeName.EndsWith(".msi"))
             {
-                // MSI based – use /qn (no UI), /norestart
-                // If the original command used /x or /i, keep it
-                if (!args.Contains("/qn")) sb.Append("/qn ");
-                if (!args.Contains("/norestart")) sb.Append("/norestart ");
+                if (!args.Contains("/qn", StringComparison.OrdinalIgnoreCase))
+                    sb.Append("/qn ");
+                if (!args.Contains("/norestart", StringComparison.OrdinalIgnoreCase))
+                    sb.Append("/norestart ");
             }
             else
             {
-                // EXE-based – try common silent switches
-                // Inno Setup: /VERYSILENT /SUPPRESSMSGBOXES
                 if (!args.Contains("/silent", StringComparison.OrdinalIgnoreCase) &&
                     !args.Contains("/verysilent", StringComparison.OrdinalIgnoreCase))
                 {
                     sb.Append("/VERYSILENT /SUPPRESSMSGBOXES ");
                 }
 
-                // NSIS or InstallShield often support /S or -s
                 if (!args.Contains("/S ", StringComparison.Ordinal) &&
                     !args.EndsWith("/S", StringComparison.Ordinal))
                 {
@@ -201,12 +181,40 @@ namespace WS_Setup_6.Core.Services
                 }
             }
 
-            // 4) Append any existing arguments (so you don’t lose custom switches)
             if (!string.IsNullOrWhiteSpace(args))
                 sb.Append(args);
 
-            // 5) Return quoted exe + final args
             return $"\"{exePath}\" {sb.ToString().Trim()}";
+        }
+
+        // Splits a command line into executable path and arguments.
+        public static (string exePath, string parsedArgs) SplitCommandLine(string uninstallString)
+        {
+            if (string.IsNullOrWhiteSpace(uninstallString))
+                return (string.Empty, string.Empty);
+
+            uninstallString = uninstallString.Trim();
+
+            if (uninstallString.StartsWith("\""))
+            {
+                // Find closing quote
+                var closingQuote = uninstallString.IndexOf('"', 1);
+                if (closingQuote > 0)
+                {
+                    var exe = uninstallString.Substring(1, closingQuote - 1);
+                    var parsedArgs = uninstallString.Substring(closingQuote + 1).TrimStart();
+                    return (exe, parsedArgs);
+                }
+            }
+
+            // No quotes, fallback to first space
+            var firstSpace = uninstallString.IndexOf(' ');
+            if (firstSpace < 0)
+                return (uninstallString, string.Empty);
+
+            var exePath = uninstallString.Substring(0, firstSpace);
+            var args = uninstallString.Substring(firstSpace + 1);
+            return (exePath, args);
         }
     }
 }
