@@ -52,3 +52,5 @@ C# and .NET8.0
 --Ditched the NSIS route and uploaded AcroRdrInstaller.exe to a web location to reduce complexity and file size.
 ----github.com releases hosts the large AcroRdrInstaller.exe file.
 ----Refactored the Adobe installer to download from the web location instead of looking in Assets.
+
+20250827: This evening will research using WiX and remove the PublishSingleFile settings.
