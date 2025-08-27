@@ -15,12 +15,13 @@
 #>
 
 param(
-  [string] $TargetDir = "C:\Working",
-  [string] $AppName   = "WS.Setup.UI.exe",
-  [string] $IconName  = "AdvTechLogo.ico",
-  [string] $PfxName   = "SignCode_Expires_20260709.pfx",
-  [string] $PfxPass   = "St@ff1234!",
-  [string] $LogFile   = "C:\Working\bootstrap.log"
+  [string] $TargetDir    = "C:\Working",
+  [string] $assetsFolder = "$TargetDir\Assets",
+  [string] $AppName      = "WS.Setup.UI.exe",
+  [string] $IconName     = "AdvTechLogo.ico",
+  [string] $PfxName      = "SignCode_Expires_20260709.pfx",
+  [string] $PfxPass      = "St@ff1234!",
+  [string] $LogFile      = "C:\Working\bootstrap.log"
 )
 
 # Logging function
@@ -189,33 +190,22 @@ try {
   Copy-Item (Join-Path $exeDir "Assets") (Join-Path $TargetDir "Assets") -Recurse -Force
   Write-Log -Message "Copied Assets folder to $TargetDir\Assets"
 
-  # 3. Copy & hide icon + certificate  
-  Update-UI -Text "Copying and hiding assets…" -Percent 50  
-  $destPfx = $null  
+  # 3. Hide the whole Assets folder and point at the PFX inside it
+  Update-UI -Text "Hiding assets folder…" -Percent 50
   
-  foreach ($asset in @($IconName, $PfxName)) {  
-      # build paths  
-      $srcFile  = Join-Path -Path $exeDir -ChildPath "Assets\$asset"  
-      $destFile = Join-Path -Path $TargetDir -ChildPath $asset  
+  $assetsFolder = Join-Path -Path $TargetDir -ChildPath "Assets"
+  if (Test-Path -Path $assetsFolder) {
+      # hide the folder (and everything inside it)
+      $folder = Get-Item -Path $assetsFolder
+      $folder.Attributes = $folder.Attributes -bor [System.IO.FileAttributes]::Hidden
+      Write-Log -Message "Set Hidden attribute on 'Assets' folder at $assetsFolder"
   
-      if (-not (Test-Path -Path $srcFile)) {  
-          Write-Log -Message "WARNING: Asset not found: $srcFile"  
-          continue  
-      }  
-  
-      # copy  
-      Copy-Item -Path $srcFile -Destination $destFile -Force  
-      Write-Log -Message "Copied '$asset' to '$destFile'"  
-  
-      # hide  
-      $file = Get-Item -Path $destFile  
-      $file.Attributes = $file.Attributes -bor [System.IO.FileAttributes]::Hidden  
-      Write-Log -Message "Set Hidden attribute on '$asset'"  
-  
-      # remember PFX for cert install  
-      if ($asset -eq $PfxName) {  
-          $destPfx = $destFile  
-      }  
+      # point destPfx at the PFX inside the now-hidden folder
+      $destPfx = Join-Path -Path $assetsFolder -ChildPath $PfxName
+      Write-Log -Message "Certificate path set to $destPfx"
+  }
+  else {
+      Write-Log -Message "WARNING: Assets folder not found at $assetsFolder"
   }
 
   # 4. Install certificate
@@ -243,17 +233,20 @@ try {
     throw "Cannot install certificate—`$destPfx is null"
   }
 
-  # 5. Create desktop shortcut
+  # 5. Create desktop shortcut with proper icon
   Update-UI -Text "Creating desktop shortcut…" -Percent 90
-  $desktop = [Environment]::GetFolderPath("Desktop")
-  $lnkPath = Join-Path $desktop "Onboard.lnk"
-  $wsh     = New-Object -ComObject WScript.Shell
-  $sc      = $wsh.CreateShortcut($lnkPath)
-  $sc.TargetPath   = Join-Path $TargetDir $AppName
-  $sc.IconLocation = Join-Path $TargetDir $IconName
+  
+  $desktop     = [Environment]::GetFolderPath("Desktop")
+  $lnkPath     = Join-Path $desktop "Onboard.lnk"
+  $wsh         = New-Object -ComObject WScript.Shell
+  $sc          = $wsh.CreateShortcut($lnkPath)
+  $sc.TargetPath       = Join-Path $TargetDir $AppName
+  $sc.WorkingDirectory = $TargetDir
+  $iconPath           = Join-Path $assetsFolder $IconName
+  $sc.IconLocation    = "$iconPath,0"
   $sc.Save()
-  Write-Log -Message "Shortcut created at $lnkPath"
-
+  Write-Log -Message "Shortcut created at $lnkPath with icon $iconPath"
+  
   # 6. Finish
   Update-UI -Text "Done with Bootstrapping!" -Percent 100
 }
