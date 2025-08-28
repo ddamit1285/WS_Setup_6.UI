@@ -8,7 +8,7 @@ Converted originally from PowerShell to Csharp, and uses MahApps and WPF for UI.
 
 This app is not model specific, it will work across any model workstation.
 
-Next bit integration is what it would take to integrate unit testing.
+Next big integration is what it would take to integrate unit testing.
 
 Link to Changelog.txt: https://github.com/ddamit1285/WS_Setup_6.UI/blob/main/WS_Setup_6.UI/Assets/CHANGE_LOG.txt
 
