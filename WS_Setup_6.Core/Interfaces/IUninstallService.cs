@@ -8,17 +8,33 @@ using WS_Setup_6.Core.Models;
 namespace WS_Setup_6.Core.Interfaces
 {
     /// <summary>
-    /// Defines methods for querying installed applications and
-    /// executing their uninstallation on Windows platforms.
+    /// Defines methods for querying installed applications,
+    /// executing their uninstallation, and handling OEM-specific removals.
     /// </summary>
     [SupportedOSPlatform("windows")]
     public interface IUninstallService
     {
+        /// <summary>
+        /// Reads registry entries and returns the list of installed apps.
+        /// </summary>
         Task<IReadOnlyList<UninstallEntry>> QueryInstalledAppsAsync();
 
+        /// <summary>
+        /// Runs a silent uninstall, stops services/processes first,
+        /// and falls back to force-delete if needed.
+        /// </summary>
         Task<UninstallResult> ExecuteUninstallAsync(
             UninstallEntry app,
             IProgress<UninstallProgress> progress,
             CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Removes OEM-branded applications (e.g. Dell) by stopping
+        /// known services/processes, running silent uninstalls, and
+        /// forcing cleanup on failure.
+        /// </summary>
+        Task RemoveOemAppsAsync(
+            IEnumerable<UninstallEntry> apps,
+            CancellationToken cancellationToken = default);
     }
 }

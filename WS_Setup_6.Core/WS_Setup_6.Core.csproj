@@ -8,6 +8,11 @@
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>MyKey.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Interfaces\IOemRemovalService.cs" />
+	  <Compile Remove="Services\OemRemovalHelper.cs" />
+	  <Compile Remove="Services\OemRemovalService.cs" />
+	</ItemGroup>
 
 	<!-- only include packages Core actually uses -->
 	<ItemGroup>

@@ -37,7 +37,6 @@ namespace WS_Setup_6.UI
             services.AddSingleton<IDialogCoordinator>(_ => DialogCoordinator.Instance);
             services.AddSingleton<IHelpersService, HelpersService>();
             services.AddSingleton<IUninstallService, UninstallService>();
-            services.AddTransient<IOemRemovalService, OemRemovalService>();
             services.AddSingleton<IAppInventoryService, AppInventoryService>();
             services.AddSingleton<IUninstallScanner, RegistryUninstallScanner>();
 

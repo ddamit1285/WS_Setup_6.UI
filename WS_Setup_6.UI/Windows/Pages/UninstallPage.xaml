@@ -84,12 +84,6 @@
                     Style="{StaticResource AccentButtonStyle}"
                     Width="140"
                     Command="{Binding UninstallSelectedCommand}" />
-
-            <Button Content="Purge OEM leftovers"
-                    Margin="8,0,0,0"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Width="140"
-                    Command="{Binding PurgeOemCommand}" />
         </StackPanel>
 
         <!-- 3) Installed Apps List -->

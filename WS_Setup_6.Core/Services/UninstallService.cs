@@ -4,36 +4,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Versioning;
 using System.ServiceProcess;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 using WS_Setup_6.Common.Interfaces;
+using WS_Setup_6.Common.Logging;
 using WS_Setup_6.Core.Interfaces;
 using WS_Setup_6.Core.Models;
-using WS_Setup_6.Common.Logging;
-using WS_Setup_6.Core.Services;
 
 namespace WS_Setup_6.Core.Services
 {
     [SupportedOSPlatform("windows")]
     public partial class UninstallService : IUninstallService
     {
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Two Main Methods that drive the uninstall process
-        /// Load List button on UI calls QueryInstalledAppsAsync
-        /// Second button removes the selected apps via ExecuteUninstallAsync
-        /// Private Helper methods at the end are used to stop services, run commands, etc.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-
         private readonly ILogService _log;
         private readonly IHelpersService _helpers;
 
-        // Single constructor assigning all readonly fields
         public UninstallService(ILogService log, IHelpersService helpers)
         {
             _log = log ?? throw new ArgumentNullException(nameof(log));
@@ -41,68 +29,61 @@ namespace WS_Setup_6.Core.Services
         }
 
         // Registry paths to scan for installed applications
-        private static readonly string[] registryUninstallPaths = new[]
+        private static readonly string[] _registryUninstallPaths = new[]
         {
             @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
             @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
         };
 
-        // Regex to match GUIDs in the uninstall key names
         [GeneratedRegex(@"\{[A-F0-9\-]+\}", RegexOptions.IgnoreCase)]
         private static partial Regex GuidPattern();
 
-
-        // 1) Query installed applications from the registry
+        // 1) Query installed applications
         public async Task<IReadOnlyList<UninstallEntry>> QueryInstalledAppsAsync()
         {
             return await Task.Run(() =>
             {
-                var entries = new List<UninstallEntry>();
-                var paths = registryUninstallPaths;
+                var list = new List<UninstallEntry>();
 
-                foreach (var basePath in paths)
+                foreach (var path in _registryUninstallPaths)
                 {
-                    using var baseKey = Registry.LocalMachine.OpenSubKey(basePath);
+                    using var baseKey = Registry.LocalMachine.OpenSubKey(path);
                     if (baseKey == null) continue;
 
-                    foreach (var subKeyName in baseKey.GetSubKeyNames())
+                    foreach (var subName in baseKey.GetSubKeyNames())
                     {
-                        using var sub = baseKey.OpenSubKey(subKeyName);
+                        using var sub = baseKey.OpenSubKey(subName);
                         if (sub == null) continue;
 
-                        var name = sub.GetValue("DisplayName") as string;
-                        var cmd = sub.GetValue("UninstallString") as string;
-                        var loc = sub.GetValue("InstallLocation") as string;
-                        var ver = sub.GetValue("DisplayVersion") as string;
-                        var pub = sub.GetValue("Publisher") as string;
-                        var guid = TryExtractGuid(subKeyName) ?? subKeyName;
-
-                        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(cmd))
+                        var displayName = sub.GetValue("DisplayName") as string;
+                        var uninstallCmd = sub.GetValue("UninstallString") as string;
+                        if (string.IsNullOrWhiteSpace(displayName) ||
+                            string.IsNullOrWhiteSpace(uninstallCmd))
                             continue;
 
-                        entries.Add(new UninstallEntry
+                        var entry = new UninstallEntry
                         {
-                            DisplayName = name,
-                            UninstallString = cmd,
-                            InstallLocation = loc,
-                            DisplayVersion = ver,
-                            Publisher = pub,
-                            ProductKey = guid,
-                            // Optional hooks—fill in common process/service names if needed
-                            ServiceName = GuessServiceName(name),
-                            ProcessNames = GuessProcessNames(name)
-                        });
+                            DisplayName = displayName,
+                            UninstallString = uninstallCmd,
+                            InstallLocation = sub.GetValue("InstallLocation") as string,
+                            DisplayVersion = sub.GetValue("DisplayVersion") as string,
+                            Publisher = sub.GetValue("Publisher") as string,
+                            ProductKey = TryExtractGuid(subName) ?? subName,
+                            ServiceName = GuessServiceName(displayName),
+                            ProcessNames = GuessProcessNames(displayName)
+                        };
+
+                        list.Add(entry);
                     }
                 }
 
-                // Sort alphabetically
-                return entries
-                    .OrderBy(e => e.DisplayName, StringComparer.InvariantCultureIgnoreCase)
+                return list
+                    .OrderBy(x => x.DisplayName, StringComparer.InvariantCultureIgnoreCase)
                     .ToList();
             });
         }
 
-        // 2) Perform the hybrid uninstall
+        // 2) Standard uninstall sequence
         public async Task<UninstallResult> ExecuteUninstallAsync(
             UninstallEntry app,
             IProgress<UninstallProgress> progress,
@@ -112,98 +93,134 @@ namespace WS_Setup_6.Core.Services
 
             try
             {
-                // Phase 1: Stopping any known services/processes
-                _log.Log("Phase 1: Stopping processes…");
+                // Phase 1: Stop services/processes
+                _log.Log("Phase 1: Stopping processes…", "INFO");
                 progress.Report(new UninstallProgress(UninstallPhase.StoppingProcesses));
-
                 await Task.Run(() => StopServicesAndProcesses(app), cancellationToken);
-                _log.Log("Stopped services and processes", "INFO");
 
-                // Phase 2: Run the vendor silent command
-                _log.Log("Phase 2: Running silent uninstall");
+                // Phase 2: Silent uninstall
+                _log.Log("Phase 2: Running silent uninstall", "INFO");
                 progress.Report(new UninstallProgress(UninstallPhase.RunningSilent));
-
                 var silentCmd = _helpers.BuildSilentCommand(app.UninstallString);
-                _log.Log($"Executing command: {silentCmd}", "DEBUG");
-
+                _log.Log($"Executing: {silentCmd}", "DEBUG");
                 var exitCode = await RunProcessAsync(silentCmd, cancellationToken);
-                _log.Log($"Silent uninstall exited with code {exitCode}", exitCode == 0 ? "INFO" : "WARN");
+                _log.Log($"Exit code: {exitCode}", exitCode == 0 ? "INFO" : "WARN");
 
-                // Phase 3: Fallback force‐delete if needed
+                // Phase 3: Force delete fallback
                 if (exitCode != 0 || await IsStillInstalledAsync(app))
                 {
-                    _log.Log("Phase 3: Fallback to force‐delete", "WARN");
+                    _log.Log("Phase 3: Fallback force-delete", "WARN");
                     progress.Report(new UninstallProgress(UninstallPhase.ForcingDelete));
                     await Task.Run(() => ForceDeleteRemnants(app), cancellationToken);
-                    _log.Log("Force‐delete completed", "INFO");
                 }
 
-                // Completion
                 progress.Report(new UninstallProgress(UninstallPhase.Completed));
                 _log.Log($"Completed uninstall: {app.DisplayName}", "INFO");
 
-                return new UninstallResult(app, exitCode: 0, success: true);
-
+                return new UninstallResult(app, exitCode: exitCode, success: exitCode == 0);
             }
             catch (OperationCanceledException)
             {
                 _log.Log($"Uninstall cancelled: {app.DisplayName}", "WARN");
-                // Return a canceled result instead of throwing
                 return new UninstallResult(app, exitCode: -1, success: false, wasCancelled: true);
             }
             catch (Exception ex)
             {
                 _log.Log($"Exception during uninstall: {ex.Message}", "ERROR");
-                // Swallow exception and return failure
                 return new UninstallResult(app, exitCode: -1, success: false);
             }
-
         }
 
-        // Helper methods for stopping services, running commands, etc.
+        // 3) OEM removal (e.g. Dell) using the same core helpers
+        public async Task RemoveOemAppsAsync(
+            IEnumerable<UninstallEntry> apps,
+            CancellationToken cancellationToken = default)
+        {
+            foreach (var app in apps)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                if (!DellOemProfile.IsMatch(app.DisplayName))
+                    continue;
+
+                _log.Log($"[OEM Removal] Target: {app.DisplayName}", "INFO");
+
+                // Stop OEM-specific services & processes
+                foreach (var svc in DellOemProfile.GetServices(app.DisplayName))
+                    SafeStopService(svc);
+
+                foreach (var proc in DellOemProfile.GetProcesses(app.DisplayName))
+                    SafeKillProcess(proc);
+
+                // Run silent uninstall
+                var cmd = _helpers.BuildSilentCommand(app.UninstallString);
+                if (string.IsNullOrWhiteSpace(cmd))
+                {
+                    _log.Log($"[OEM Removal] No command for {app.DisplayName}", "WARN");
+                    continue;
+                }
+
+                var exitCode = await RunProcessAsync(cmd, cancellationToken);
+                _log.Log(
+                    $"[OEM Removal] {app.DisplayName} exited {exitCode}",
+                    exitCode == 0 ? "INFO" : "WARN");
+
+                // Fallback if still present
+                if (exitCode != 0 || await IsStillInstalledAsync(app))
+                {
+                    _log.Log($"[OEM Removal] Forcing delete: {app.DisplayName}", "WARN");
+                    ForceDeleteRemnants(app);
+                }
+            }
+        }
+
         #region Helpers
 
+        // Stop generic + OEM services/processes
         private static void StopServicesAndProcesses(UninstallEntry app)
         {
-            // Stop service by name
             if (!string.IsNullOrEmpty(app.ServiceName))
-            {
-                try
-                {
-                    using var sc = new ServiceController(app.ServiceName);
-                    if (sc.Status != ServiceControllerStatus.Stopped)
-                    {
-                        sc.Stop();
-                        sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
-                    }
-                }
-                catch { /* log if desired */ }
-            }
+                SafeStopService(app.ServiceName);
 
-            // Kill any running processes
             if (app.ProcessNames != null)
-            {
-                foreach (var pname in app.ProcessNames)
-                {
-                    foreach (var proc in Process.GetProcessesByName(pname))
-                    {
-                        try
-                        {
-                            proc.Kill();
-                            proc.WaitForExit(5_000);
-                        }
-                        catch { /* log if needed */ }
-                    }
-                }
-            }
+                foreach (var name in app.ProcessNames)
+                    SafeKillProcess(name);
         }
 
-        // Generic method to run a command asynchronously
+        private static void SafeStopService(string svc)
+        {
+            try
+            {
+                using var sc = new ServiceController(svc);
+                if (sc.Status != ServiceControllerStatus.Stopped)
+                {
+                    sc.Stop();
+                    sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(30));
+                }
+            }
+            catch { /* swallow or log externally */ }
+        }
+
+        private static void SafeKillProcess(string pname)
+        {
+            try
+            {
+                foreach (var proc in Process.GetProcessesByName(pname))
+                {
+                    proc.Kill();
+                    proc.WaitForExit(5000);
+                }
+            }
+            catch { /* swallow or log externally */ }
+        }
+
+        // Runs a command line and returns exit code
         private static async Task<int> RunProcessAsync(string cmdLine, CancellationToken token)
         {
-            var firstSpace = cmdLine.IndexOf(' ');
-            var exe = firstSpace > 0 ? cmdLine[..firstSpace] : cmdLine;
-            var args = firstSpace > 0 ? cmdLine[(firstSpace + 1)..] : "";
+            var idx = cmdLine.IndexOf(' ');
+            var exe = idx > 0 ? cmdLine[..idx] : cmdLine;
+            var args = idx > 0 ? cmdLine[(idx + 1)..] : "";
 
             var psi = new ProcessStartInfo(exe, args)
             {
@@ -211,99 +228,130 @@ namespace WS_Setup_6.Core.Services
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-                Verb = "runas"  // elevate
+                Verb = "runas"
             };
 
-            using var proc = Process.Start(psi);
-            if (proc == null) return -1;
-
-            // watch for cancellation
-            using var registration = token.Register(() =>
-            {
-                try { proc.Kill(); } catch { }
-            });
+            using var proc = Process.Start(psi) ?? throw new InvalidOperationException("Process start failed");
+            using var reg = token.Register(() => { try { proc.Kill(); } catch { } });
 
             await proc.WaitForExitAsync(token);
             return proc.ExitCode;
         }
 
-        // Check if the app is still installed by looking for files or registry keys
+        // Check disk or registry for leftovers
         private static Task<bool> IsStillInstalledAsync(UninstallEntry app)
         {
-            // Quick heuristic: still on disk or registry?
-            if (!string.IsNullOrEmpty(app.InstallLocation) &&
+            if (!string.IsNullOrWhiteSpace(app.InstallLocation) &&
                 Directory.Exists(app.InstallLocation))
             {
                 return Task.FromResult(true);
             }
-            // Otherwise, re‐scan registry for the same ProductKey
             return Task.FromResult(false);
         }
 
-        // Force delete remnants if the uninstall failed or app is still present
+        // Delete files + registry uninstall key
         private static void ForceDeleteRemnants(UninstallEntry app)
         {
-            // Delete files
-            if (!string.IsNullOrEmpty(app.InstallLocation) &&
+            if (!string.IsNullOrWhiteSpace(app.InstallLocation) &&
                 Directory.Exists(app.InstallLocation))
             {
-                try { Directory.Delete(app.InstallLocation, true); }
-                catch { /* swallow or log */ }
+                try { Directory.Delete(app.InstallLocation, true); } catch { }
             }
-            // Remove registry uninstall key
-            var paths = new[]
+
+            var keys = new[]
             {
-                @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + app.ProductKey,
-                @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\" + app.ProductKey
+                $@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{app.ProductKey}",
+                $@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{app.ProductKey}"
             };
-            foreach (var p in paths)
+
+            foreach (var path in keys)
             {
                 try
                 {
-                    using var root = Registry.LocalMachine.OpenSubKey(Path.GetDirectoryName(p)!, true);
-                    root?.DeleteSubKeyTree(Path.GetFileName(p), throwOnMissingSubKey: false);
+                    using var root = Registry.LocalMachine.OpenSubKey(
+                        Path.GetDirectoryName(path)!, writable: true);
+                    root?.DeleteSubKeyTree(Path.GetFileName(path), throwOnMissingSubKey: false);
                 }
-                catch { /* swallow or log */ }
+                catch { }
             }
         }
 
-        // Try to extract a GUID from the raw key name
+        // Extract GUID from registry key name
         private static string? TryExtractGuid(string raw)
         {
             var m = GuidPattern().Match(raw);
             return m.Success ? m.Value : null;
         }
 
-        // Guess service or process names based on common patterns
+        // Guess common service names
         private static string? GuessServiceName(string displayName)
         {
-            // e.g. Office click-to-run
             if (displayName.Contains("Office", StringComparison.OrdinalIgnoreCase))
                 return "OfficeClickToRunSvc";
-
             if (displayName.Contains("Optimizer", StringComparison.OrdinalIgnoreCase))
-                return "DellOptimizer"; // actual service name
-
+                return "DellOptimizer";
             if (displayName.Contains("Core Services", StringComparison.OrdinalIgnoreCase))
                 return "DellClientManagementService";
-
             return null;
         }
 
-        // Guess process names based on display name
+        // Guess common process names
         private static string[]? GuessProcessNames(string displayName)
         {
-            // e.g. PowerBI, DellCommandUpdate, etc.
             if (displayName.Contains("Dell", StringComparison.OrdinalIgnoreCase))
             {
                 if (displayName.Contains("Optimizer", StringComparison.OrdinalIgnoreCase))
                     return new[] { "DellOptimizer", "DOCLI" };
-
                 if (displayName.Contains("Core Services", StringComparison.OrdinalIgnoreCase))
                     return new[] { "DellClientManagementService" };
             }
             return null;
         }
+
+        #endregion
+
+        #region Dell OEM Profile
+
+        private static class DellOemProfile
+        {
+            private static readonly string[] Patterns = {
+                "Dell Optimizer",
+                "Dell Core Services",
+                "Dell Command",
+                "Dell Power Manager",
+                "Dell SupportAssist",
+                "Dell Digital Delivery"
+            };
+
+            private static readonly Dictionary<string, string[]> ServiceMap =
+                new(StringComparer.OrdinalIgnoreCase) {
+                    { "Dell Optimizer",        new[] { "DellOptimizer" } },
+                    { "Dell Core Services",    new[] { "DellClientManagementService" } },
+                    { "Dell Command",          new[] { "DellCommandUpdate" } },
+                    { "Dell Power Manager",    new[] { "DellPwrMgrSvc" } },
+                };
+
+            private static readonly Dictionary<string, string[]> ProcessMap =
+                new(StringComparer.OrdinalIgnoreCase) {
+                    { "Dell Optimizer",     new[] { "DellOptimizer", "DOCLI" } },
+                    { "Dell Core Services", new[] { "DellClientManagementService" } },
+                    { "Dell Command",       new[] { "DellCommandUpdate" } },
+                };
+
+            public static bool IsMatch(string name) =>
+                Patterns.Any(p => name.Contains(p, StringComparison.OrdinalIgnoreCase));
+
+            public static string[] GetServices(string name) =>
+                ServiceMap.TryGetValue(MatchKey(name), out var svcs) ? svcs : Array.Empty<string>();
+
+            public static string[] GetProcesses(string name) =>
+                ProcessMap.TryGetValue(MatchKey(name), out var procs) ? procs : Array.Empty<string>();
+
+            private static string MatchKey(string name) =>
+                Patterns.FirstOrDefault(p => name.Contains(p, StringComparison.OrdinalIgnoreCase))
+                ?? name;
+        }
+
         #endregion
     }
 }

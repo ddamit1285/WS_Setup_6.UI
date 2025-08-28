@@ -12,7 +12,6 @@ namespace WS_Setup_6.UI.ViewModels
     public partial class UninstallViewModel : ObservableObject
     {
         private readonly ILogService _log;
-        private readonly IOemRemovalService _oemRemovalService;
         private readonly IUninstallService _uninstallService;
         private readonly IAppInventoryService _appInventoryService;
         private CancellationTokenSource? _cts;
@@ -34,18 +33,15 @@ namespace WS_Setup_6.UI.ViewModels
 
         public IAsyncRelayCommand LoadAppsCommand { get; }
         public IAsyncRelayCommand UninstallSelectedCommand { get; }
-        public IAsyncRelayCommand PurgeOemCommand { get; }
 
         public bool CanExecute => SelectedApps.Any() && !IsUninstalling;
 
         public UninstallViewModel(
             IUninstallService uninstallService,
-            IOemRemovalService oemRemovalService,
             ILogService log,
             IAppInventoryService appInventoryService)
         {
             _uninstallService = uninstallService;
-            _oemRemovalService = oemRemovalService;
             _log = log;
             _appInventoryService = appInventoryService;
 
@@ -57,10 +53,6 @@ namespace WS_Setup_6.UI.ViewModels
                 ExecuteBatchUninstallAsync,
                 () => CanExecute
             );
-            PurgeOemCommand = new AsyncRelayCommand(RemoveStubbornAppsAsync);
-
-            SelectedApps.CollectionChanged += (_, __) =>
-                UninstallSelectedCommand.NotifyCanExecuteChanged();
         }
 
         partial void OnIsUninstallingChanged(bool oldValue, bool newValue) =>
@@ -112,26 +104,6 @@ namespace WS_Setup_6.UI.ViewModels
             StatusMessage = "Batch uninstall complete.";
             IsUninstalling = false;
             await LoadAppsAsync();
-        }
-
-        private async Task RemoveStubbornAppsAsync()
-        {
-            try
-            {
-                _log.Log("Starting OEM stubborn app removal…", "INFO");
-
-                var oemCandidates = InstalledApps
-                    .Where(a => a.Publisher?.Contains("Dell", StringComparison.OrdinalIgnoreCase) == true)
-                    .ToList();
-
-                await _oemRemovalService.RemoveOemAppsAsync(oemCandidates);
-
-                _log.Log("OEM stubborn app removal complete.", "INFO");
-            }
-            catch (Exception ex)
-            {
-                _log.Log($"OEM removal error: {ex.Message}", "ERROR");
-            }
         }
     }
 }
