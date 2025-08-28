@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Bundle Name="WiX.Bootstrapper" Version="1.0.0.0" Manufacturer="" UpgradeCode="39a65fa2-5df6-4976-a43c-9d321a25376c">
+	<Bundle Name="WiX.Bootstrapper" Version="6.7.1.0" Manufacturer="Advantage Technologies" UpgradeCode="39a65fa2-5df6-4976-a43c-9d321a25376c">
 		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
 
 		<Chain>
