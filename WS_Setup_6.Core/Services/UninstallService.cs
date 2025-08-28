@@ -310,6 +310,8 @@ namespace WS_Setup_6.Core.Services
 
         #endregion
 
+        // Dell OEM-specific patterns and mappings
+        // Update as needed for specific programs
         #region Dell OEM Profile
 
         private static class DellOemProfile
