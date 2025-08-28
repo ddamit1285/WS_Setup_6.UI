@@ -178,7 +178,7 @@ namespace WS_Setup_6.Core.Services
 			http.DefaultRequestHeaders.UserAgent.ParseAdd("AdvTechSetup");
 
 			var apiUrl =
-			  "https://api.github.com/repos/ddamit1285/advtech-deploy-assets/releases/latest";
+			  "https://api.github.com/repos/dan-damit/advtech-deploy-assets/releases/latest";
 			var json = await http.GetStringAsync(apiUrl);
 			using var doc = JsonDocument.Parse(json);
 
