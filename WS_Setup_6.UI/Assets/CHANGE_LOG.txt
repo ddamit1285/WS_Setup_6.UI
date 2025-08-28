@@ -54,3 +54,6 @@ C# and .NET8.0
 ----Refactored the Adobe installer to download from the web location instead of looking in Assets.
 
 20250827: This evening will research using WiX and remove the PublishSingleFile settings.
+--Refactored Uninstaller logic based on the log file from the last run on a Dell machine.
+--Working now on WiX project - still a work in progress.
+

@@ -101,9 +101,11 @@ namespace WS_Setup_6.Core.Services
                 // Phase 2: Silent uninstall
                 _log.Log("Phase 2: Running silent uninstall", "INFO");
                 progress.Report(new UninstallProgress(UninstallPhase.RunningSilent));
-                var silentCmd = _helpers.BuildSilentCommand(app.UninstallString);
-                _log.Log($"Executing: {silentCmd}", "DEBUG");
-                var exitCode = await RunProcessAsync(silentCmd, cancellationToken);
+                var cmd = _helpers.BuildSilentCommand(app.UninstallString);
+                var useShell = cmd.EndsWith("msiexec", StringComparison.OrdinalIgnoreCase)
+                || cmd.Contains("msiexec ", StringComparison.OrdinalIgnoreCase);
+                _log.Log($"Executing: {cmd}", "DEBUG");
+                var exitCode = await RunProcessAsync(cmd, cancellationToken, useShellExecute: useShell);
                 _log.Log($"Exit code: {exitCode}", exitCode == 0 ? "INFO" : "WARN");
 
                 // Phase 3: Force delete fallback
@@ -216,23 +218,52 @@ namespace WS_Setup_6.Core.Services
         }
 
         // Runs a command line and returns exit code
-        private static async Task<int> RunProcessAsync(string cmdLine, CancellationToken token)
+        /// <summary>
+        /// Runs a command line, optionally via ShellExecute+runas to ensure elevation.
+        /// If useShellExecute==true, stdout/stderr redirection is disabled.
+        /// </summary>
+        private async Task<int> RunProcessAsync(
+            string cmdLine,
+            CancellationToken token,
+            bool useShellExecute = false)
         {
+            // split full command into exe + args
             var idx = cmdLine.IndexOf(' ');
             var exe = idx > 0 ? cmdLine[..idx] : cmdLine;
-            var args = idx > 0 ? cmdLine[(idx + 1)..] : "";
+            var args = idx > 0 ? cmdLine[(idx + 1)..] : string.Empty;
 
             var psi = new ProcessStartInfo(exe, args)
             {
-                UseShellExecute = false,
+                UseShellExecute = useShellExecute,
                 CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                Verb = "runas"
+                Verb = useShellExecute ? "runas" : null
             };
 
-            using var proc = Process.Start(psi) ?? throw new InvalidOperationException("Process start failed");
+            // only wire up streams if not using shellexecute
+            if (!useShellExecute)
+            {
+                psi.RedirectStandardOutput = true;
+                psi.RedirectStandardError = true;
+            }
+
+            using var proc = Process.Start(psi)
+                            ?? throw new InvalidOperationException("Process failed to start");
             using var reg = token.Register(() => { try { proc.Kill(); } catch { } });
+
+            if (!useShellExecute)
+            {
+                // fire-and-forget reads to avoid deadlocks
+                _ = Task.Run(async () => {
+                    string? line;
+                    while ((line = await proc.StandardOutput.ReadLineAsync()) != null)
+                        _log.Log(line, "DEBUG");
+                });
+                _ = Task.Run(async () => {
+                    string? line;
+                    while ((line = await proc.StandardError.ReadLineAsync()) != null)
+                        _log.Log(line, "ERROR");
+                });
+            }
 
             await proc.WaitForExitAsync(token);
             return proc.ExitCode;
