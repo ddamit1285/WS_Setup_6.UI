@@ -11,5 +11,6 @@ obj/
 *.log
 *.snk
 *.sln
+*.wixproj
 AcroRdrInstaller.exe
 Settings.settings

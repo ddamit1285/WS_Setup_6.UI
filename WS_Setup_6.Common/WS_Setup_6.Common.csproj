@@ -12,12 +12,12 @@
 	<ItemGroup>
 		<PackageReference Include="Cake.Powershell" Version="4.0.0" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
-		<PackageReference Include="MahApps.Metro.IconPacks" Version="6.0.0" />
+		<PackageReference Include="MahApps.Metro.IconPacks" Version="6.1.0" />
 		<PackageReference Include="MahApps.Metro.Resources" Version="0.6.1" />
 		<PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
 		<PackageReference Include="ServiceStack.Common" Version="8.8.0" />
-		<PackageReference Include="System.Management" Version="9.0.7">
+		<PackageReference Include="System.Management" Version="9.0.8">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

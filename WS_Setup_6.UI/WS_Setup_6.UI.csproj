@@ -8,7 +8,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
-		
+
 		<AssemblyTitle>Advantage Technologies New Workstation Onboarding Tool</AssemblyTitle>
 		<Company>Advantage Technologies</Company>
 		<Author>Dan Damit</Author>
@@ -16,35 +16,31 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Copyright>© 2025 Advantage Technologies. All rights reserved.</Copyright>
 
-		<!-- 2. Single-file, Self-contained Publish -->
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-		<SelfContained>true</SelfContained>
-		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>false</SelfContained>
+		<PublishSingleFile>false</PublishSingleFile>
 		<PublishReadyToRun>true</PublishReadyToRun>
-		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>MyKey.snk</AssemblyOriginatorKeyFile>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-		<!-- <PublishTrimmed>true</PublishTrimmed> -->
-		<!-- enable only after reflection testing -->
 
-		<!-- 3. Custom Version Stamp: 6.5.yyMM.ddHH -->
+		<!-- Custom Version Stamp -->
 		<Version>6.7.$([System.DateTime]::Now.ToString("yyMM")).$([System.DateTime]::Now.ToString("ddHH"))</Version>
 		<StartupObject>WS_Setup_6.UI.App</StartupObject>
-
 	</PropertyGroup>
 
-	<!-- 7. Static Assets: copy everything under Assets\ to output -->
+	<!-- 2. Static Assets -->
 	<ItemGroup>
 		<Content Include="Assets\**\*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
 		</Content>
+		<SplashScreen Include="Assets\AdvTechSplash.bmp" />
 	</ItemGroup>
 
-	<!-- 8. NuGet Dependencies -->
+	<!-- 3. NuGet Dependencies -->
 	<ItemGroup>
+		<!-- Existing app packages -->
 		<PackageReference Include="Cake.Powershell" Version="4.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
@@ -53,15 +49,35 @@
 		<PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
 		<PackageReference Include="System.Management" Version="9.0.7" />
+
+		<!-- WiX v6 integration -->
+		<PackageReference Include="WixToolset.Msi" Version="6.0.1" />
+		<PackageReference Include="WixToolset.Bal" Version="6.0.1" />
 	</ItemGroup>
 
-	<!-- 9. Project References -->
+	<!-- 4. Project References -->
 	<ItemGroup>
 		<ProjectReference Include="..\WS_Setup_6.Common\WS_Setup_6.Common.csproj" />
 		<ProjectReference Include="..\WS_Setup_6.Core\WS_Setup_6.Core.csproj" />
 	</ItemGroup>
+
+	<!-- 5. WiX Source Files -->
 	<ItemGroup>
-	  <SplashScreen Include="Assets\AdvTechSplash.bmp" />
+		<WixSource Include="Product.wxs" />
+		<WixSource Include="Bundle.wxs" />
+		<WixSource Include="HarvestFiles.wxs" />
+		<WixLocalization Include="Strings.en-us.wxl" />
 	</ItemGroup>
+
+	<!-- 6. Import WiX build targets so MSBuild produces MSI + bundle -->
+	<Import Project="$(NuGetPackageRoot)wixtoolset.msi\6.0.2\build\WixToolset.Msi.props"
+          Condition="Exists('$(NuGetPackageRoot)wixtoolset.msi\6.0.2\build\WixToolset.Msi.props')" />
+	<Import Project="$(NuGetPackageRoot)wixtoolset.bal\6.0.2\build\WixToolset.Bal.props"
+			Condition="Exists('$(NuGetPackageRoot)wixtoolset.bal\6.0.2\build\WixToolset.Bal.props')" />
+
+	<Import Project="$(NuGetPackageRoot)wixtoolset.msi\6.0.2\build\WixToolset.Msi.targets"
+			Condition="Exists('$(NuGetPackageRoot)wixtoolset.msi\6.0.2\build\WixToolset.Msi.targets')" />
+	<Import Project="$(NuGetPackageRoot)wixtoolset.bal\6.0.2\build\WixToolset.Bal.targets"
+			Condition="Exists('$(NuGetPackageRoot)wixtoolset.bal\6.0.2\build\WixToolset.Bal.targets')" />
 
 </Project>

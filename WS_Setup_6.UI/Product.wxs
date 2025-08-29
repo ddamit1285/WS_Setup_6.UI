@@ -17,17 +17,49 @@
 
 		<Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
 			<ComponentGroupRef Id="AppFilesGroup" />
+			<ComponentRef Id="MainExeComponent" />
+			<!-- Ensure EXE component is in the feature -->
 		</Feature>
+
 		<Icon Id="AppIcon" SourceFile="Assets\AdvTechLogo.ico" />
 		<Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
 	</Product>
 
+	<!-- Directories -->
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
 				<Directory Id="INSTALLFOLDER" Name="$(var.ProductName)" />
 			</Directory>
 		</Directory>
+	</Fragment>
+
+	<!-- Component for the installed EXE -->
+	<Fragment>
+		<DirectoryRef Id="INSTALLFOLDER">
+			<Component Id="MainExeComponent" Guid="PUT-GUID-HERE">
+				<File Id="MainExeFile"
+					  Source="$(var.WS_Setup_6.UI.TargetPath)"
+					  KeyPath="yes" />
+			</Component>
+		</DirectoryRef>
+	</Fragment>
+
+	<!-- Custom Action to run the EXE -->
+	<Fragment>
+		<CustomAction Id="RunMainExe"
+					  FileRef="MainExeFile"
+					  ExeCommand=""
+					  Execute="deferred"
+					  Impersonate="no"
+					  Return="asyncNoWait" />
+
+		<InstallExecuteSequence>
+			<Custom Action="RunMainExe" After="InstallFinalize">
+				NOT Installed
+			</Custom>
+		</InstallExecuteSequence>
 	</Fragment>
 
 </Wix>
