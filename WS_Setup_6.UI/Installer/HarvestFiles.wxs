@@ -1,0 +1,395 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <DirectoryRef Id="INSTALLFOLDER">
+            <Directory Id="dirpd6kyAi8zjoqdnwTAezUlt.Rxgw" Name="Assets" />
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="AppFilesGroup">
+            <Component Id="cmpwMAdHUNnEikiJEG96L7rH254k18" Directory="INSTALLFOLDER" Guid="7AD19B11-0894-4E90-9015-B0EACCB764B1">
+                <File Id="fil_YeasF_9gDaVzKmvVwR1hYLCrq8" KeyPath="yes" Source="SourceDir\Cake.Powershell.dll" />
+            </Component>
+            <Component Id="cmpgp.5_i11jaf9aPwrOeF_.aU72sY" Directory="INSTALLFOLDER" Guid="0E29438E-A179-45F5-B2F1-EEF832E10984">
+                <File Id="filYuEOGRah5j7xTlFfuOm0VJPg4QQ" KeyPath="yes" Source="SourceDir\CommunityToolkit.Mvvm.dll" />
+            </Component>
+            <Component Id="cmpSWb0VeArKeL.yJRksu3M8UMX.iI" Directory="INSTALLFOLDER" Guid="23DB9A31-C31D-4976-9C07-FCDEC5B00FD7">
+                <File Id="filbERgCSlCXBu4Bfd0thB63lYRnoU" KeyPath="yes" Source="SourceDir\ControlzEx.dll" />
+            </Component>
+            <Component Id="cmpNKUuGYO_pf7717IrJY9bIPl_GkA" Directory="INSTALLFOLDER" Guid="C81D3409-B3B9-4DB3-A41C-D15B1168CC39">
+                <File Id="filqB53zuR42CPJBsK23KsAzHCro_E" KeyPath="yes" Source="SourceDir\getfilesiginforedist.dll" />
+            </Component>
+            <Component Id="cmpXvagdjD18.VzGCKtIEB6ET84.jg" Directory="INSTALLFOLDER" Guid="76ED5221-6A09-4195-B372-3D6AA99D65D2">
+                <File Id="filHjQaeUZD7tKxHxcPnwJ9HwE_eu8" KeyPath="yes" Source="SourceDir\getfilesiginforedistwrapper.dll" />
+            </Component>
+            <Component Id="cmp3rUkrREBSGnN5Gi6fRJfymytBIg" Directory="INSTALLFOLDER" Guid="59E21EF7-A68D-422A-92A8-AF89D5A64A38">
+                <File Id="filNH2Nsy.VRjStkvc_bNWddBugD50" KeyPath="yes" Source="SourceDir\JetBrains.Annotations.dll" />
+            </Component>
+            <Component Id="cmpIhS6BxbEPm2eljYybAkZ6rtRgto" Directory="INSTALLFOLDER" Guid="4CFF3F25-D1F7-41C0-98AD-CCFD32B46AD1">
+                <File Id="filM34kl3vlLhqpxUIUogHcN43_Z00" KeyPath="yes" Source="SourceDir\Json.More.dll" />
+            </Component>
+            <Component Id="cmp9rypzfQgcSRWx6mk2iWYzjj.tm0" Directory="INSTALLFOLDER" Guid="1843FAEB-5CE4-4DF0-B56B-D554FF52E9A6">
+                <File Id="filtGSarG2e6ZwbrPwhRXC9557pkMM" KeyPath="yes" Source="SourceDir\JsonPointer.Net.dll" />
+            </Component>
+            <Component Id="cmpP18QCsb_919Ta8T9u2a69xnUyuk" Directory="INSTALLFOLDER" Guid="6CB79C56-95F2-4058-AD40-57A7A04D5694">
+                <File Id="filj3raULlcfHuYXi7hy3L7Pm8IdNg" KeyPath="yes" Source="SourceDir\JsonSchema.Net.dll" />
+            </Component>
+            <Component Id="cmpjlrq5buxyw6F_gxCCMfmavt98m4" Directory="INSTALLFOLDER" Guid="4545BC11-973E-4C54-A9AD-1E37B64868A6">
+                <File Id="filfS83GCt_dxHSw1yC791M.SaIiKI" KeyPath="yes" Source="SourceDir\MahApps.Metro.dll" />
+            </Component>
+            <Component Id="cmp1ni_OTD396gnHs_Ca5sShhCtdVc" Directory="INSTALLFOLDER" Guid="A7B2900B-A88B-4BAF-8C0B-BC52F20856E1">
+                <File Id="fil6uybeeR6wUcvRwt8CxR8WyR8WSU" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.BootstrapIcons.dll" />
+            </Component>
+            <Component Id="cmpnYBaJgi2TdULLNLY5WnjT0SBlE0" Directory="INSTALLFOLDER" Guid="AB234365-A077-420F-BAF1-00F9792FCDF1">
+                <File Id="filETBPXh2Nvt81Ai7w3AaZifcKGr4" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.BoxIcons.dll" />
+            </Component>
+            <Component Id="cmpc4Uc9Hw6ilvZ8MyOkgw3FK1IosY" Directory="INSTALLFOLDER" Guid="D19BCC9D-13AC-4301-B678-85120268A7C8">
+                <File Id="filjrIbCwUj6XyvR97Q6DEHvSpeUvY" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.CircumIcons.dll" />
+            </Component>
+            <Component Id="cmpwMsF1x8rhFTfrR0HZ_8K80LeFlk" Directory="INSTALLFOLDER" Guid="B0C24F1C-7960-47DC-A9F7-74A1C62A18B8">
+                <File Id="filTAFXlWEQA9WLqocMU6yXUDwJaaE" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Codicons.dll" />
+            </Component>
+            <Component Id="cmpivMfqkWiDLylgW3_cr3y2Vowt6I" Directory="INSTALLFOLDER" Guid="3EA9B438-839D-474E-A5C2-30CA2390AFB2">
+                <File Id="filRpzzvh8AZVmJTOmcvCGKLUqn58Q" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Coolicons.dll" />
+            </Component>
+            <Component Id="cmp2YYFxzAkBtcLXc9c5Phj6GWOIAg" Directory="INSTALLFOLDER" Guid="81F693A3-74D8-4F05-9F7A-961C7EFBCE35">
+                <File Id="fil2TGHsK.FcInTH9VkEh_CZCrKP94" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Core.dll" />
+            </Component>
+            <Component Id="cmp8LHVGTbPKbhUXnxon0hRzHjRWqQ" Directory="INSTALLFOLDER" Guid="6CD00E7D-10C5-42C5-A46C-A741EB46CDB2">
+                <File Id="fil0a6Bp5QMwYXVW299reMxuxrtMoI" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.dll" />
+            </Component>
+            <Component Id="cmpmAYx8P5mHIcorSE3F5NjBGA6s8o" Directory="INSTALLFOLDER" Guid="4C1B043D-2A61-4501-ABB5-E7CAFE749144">
+                <File Id="filysrJQHzkj5S0amI0YleAU89OyxM" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Entypo.dll" />
+            </Component>
+            <Component Id="cmpxbBKrfU0V5WNIiHIFdtDUjYCgDY" Directory="INSTALLFOLDER" Guid="46A14EE5-C223-426E-B841-BEF82B6A6C11">
+                <File Id="fil4voSm9VaIl.o1vR8aNvB2ZXfy8c" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.EvaIcons.dll" />
+            </Component>
+            <Component Id="cmpTUarmq0694a7AhSSDnVfyItbnFI" Directory="INSTALLFOLDER" Guid="6CE3C484-B169-4672-915F-5026FF247A7E">
+                <File Id="filQEgGUAENTMOhpRM8Mh43R8YOM.4" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.FeatherIcons.dll" />
+            </Component>
+            <Component Id="cmpFlWVoI4UVEXGoKaOCKZWgaXummo" Directory="INSTALLFOLDER" Guid="CB070BD8-59A8-4F3D-B7FB-43E13CCF78E8">
+                <File Id="filxiqq4ERfreig3sa3QJlzKPQvxAE" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.FileIcons.dll" />
+            </Component>
+            <Component Id="cmpCL3I7S.s1sNkAp5CYntrhMxH3e8" Directory="INSTALLFOLDER" Guid="34414522-EA89-4988-AA63-3028AC6F2E9E">
+                <File Id="filsK0E4bXoV6AtAb7R0WskVfGlvNQ" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Fontaudio.dll" />
+            </Component>
+            <Component Id="cmpjPkAfT.Eg_xyJrdYysRV758XYkE" Directory="INSTALLFOLDER" Guid="F13F494F-DC73-43DB-8349-2BC5B79388D7">
+                <File Id="filRh5xBquFCwv9HJkyOEAxMKXrSxc" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.FontAwesome.dll" />
+            </Component>
+            <Component Id="cmpvTMq9P8wWUK_HNg9rwdL.7EsAr8" Directory="INSTALLFOLDER" Guid="CD1BA820-3A24-49F6-8FF6-A44F32641B09">
+                <File Id="fil_0UYqDrP7g6QcTye64sO.Eo4ql8" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.FontAwesome5.dll" />
+            </Component>
+            <Component Id="cmplww13311bAjbGQ3.I4QLodWp64g" Directory="INSTALLFOLDER" Guid="41F9F980-F676-46D8-AA7D-4CB6A4C0F818">
+                <File Id="fil6GHCALzvk17vA7kP7csYv7ufHsE" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.FontAwesome6.dll" />
+            </Component>
+            <Component Id="cmpR09Uw6u2zYqfEFLFp_q2Z5MEWvk" Directory="INSTALLFOLDER" Guid="AADA8ED0-1A5D-4C41-931F-600CBEF36AA7">
+                <File Id="fil6zLYgb38hRX7rnjyY8FfVIxK_Y8" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Fontisto.dll" />
+            </Component>
+            <Component Id="cmpgryBXfMc3cfny9LiT1w_2nWIVnY" Directory="INSTALLFOLDER" Guid="17DA0F6C-F405-40AC-91B9-666F11B1FE2B">
+                <File Id="filTXb7Kw4pMqx8v6HTp_oqbZysBDc" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.ForkAwesome.dll" />
+            </Component>
+            <Component Id="cmpTe01qUuqxseNnXth.IN.HoVrrvs" Directory="INSTALLFOLDER" Guid="0E1C4AAE-9B2B-43DE-A587-4B3F15E6A5F3">
+                <File Id="filGBSQODS0vbs5CyXKwmrFpTEaD2s" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.GameIcons.dll" />
+            </Component>
+            <Component Id="cmpcJgCN6C50cJyKs5NfgfcUrpiajg" Directory="INSTALLFOLDER" Guid="3ED72D20-3335-48D5-8C86-E0D9198EE183">
+                <File Id="filuPPwssXvRdgZZUO0ECpaIp9eZvA" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Ionicons.dll" />
+            </Component>
+            <Component Id="cmp5CAANGCUpuYCXQqh.Y75QZTbvik" Directory="INSTALLFOLDER" Guid="1765632F-F9DC-4105-B69E-EA20809A65E4">
+                <File Id="fil5J0UyZKZXP0HsSt8nUGldj8RQRU" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.JamIcons.dll" />
+            </Component>
+            <Component Id="cmpv0lXM24UGEN2b5GrqmHVS1Vf2d4" Directory="INSTALLFOLDER" Guid="D40105E8-228A-4FD7-9DFD-401D8465777B">
+                <File Id="filx4V97npujMxoPQGRLnG30BgzKcM" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Lucide.dll" />
+            </Component>
+            <Component Id="cmpsty9Zjf.f5TO47wyMSuGhJW8vVI" Directory="INSTALLFOLDER" Guid="21A43937-9A60-4BE6-A3FF-9677A2B5DBB2">
+                <File Id="filGbEoqP.oVt6qZOw.6sHUy0ENS5c" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Material.dll" />
+            </Component>
+            <Component Id="cmpukIjYqqcCnFUFkBjf_U_5Sc3bu0" Directory="INSTALLFOLDER" Guid="38DF3C79-B0FB-4A37-91BF-AE699FCA176C">
+                <File Id="filpbqw9xbvXJ53QH_tdEnMY69VSLk" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.MaterialDesign.dll" />
+            </Component>
+            <Component Id="cmpCNftZ6kRe8._9CBtwIgooJBqxxU" Directory="INSTALLFOLDER" Guid="3284DE18-9A1F-452E-8906-6650D9C6BEE7">
+                <File Id="filwnDvoUj01NLTbZ3t_9m._AGWL9U" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.MaterialLight.dll" />
+            </Component>
+            <Component Id="cmp.Aq7BO88c2bG.00IuGyDyaV8SAI" Directory="INSTALLFOLDER" Guid="F8CDD73D-31E5-4809-93CF-02B366A000AA">
+                <File Id="filRXLlRZeY16CG2YJDQp4hfxJ9JVY" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.MemoryIcons.dll" />
+            </Component>
+            <Component Id="cmpZuf6BFDrfD1CrS.yFvpK1PEYP3Q" Directory="INSTALLFOLDER" Guid="85C6A6C6-3465-4161-8BF4-E3D8610E5E80">
+                <File Id="fil3FS9.eyAOO.BBzPo1Jfoh15GhQk" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Microns.dll" />
+            </Component>
+            <Component Id="cmp5K0Vnan.mhZ1X0_0jl7ssNea_Js" Directory="INSTALLFOLDER" Guid="A97A6FED-A5E4-4554-A510-399F69F69153">
+                <File Id="fil33Pl_3N8QMZCwcdPsSQQSh3.j9Y" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.MingCuteIcons.dll" />
+            </Component>
+            <Component Id="cmphsIZdLN.uyRwo2sCwx82v5qRdTo" Directory="INSTALLFOLDER" Guid="82A03BE6-FF27-496B-8DC3-0AE03E3B956D">
+                <File Id="filL6T1Vk3Hwyw3P7Ck3ixMpQFPy1A" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Modern.dll" />
+            </Component>
+            <Component Id="cmpJbkuCFkM8LjhmTENg5m089y_GjQ" Directory="INSTALLFOLDER" Guid="C431C709-1F1E-4236-9A15-2555CC61F122">
+                <File Id="fil5zBh5BF0urQOGOPsT0P20hEEVDo" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.MynaUIIcons.dll" />
+            </Component>
+            <Component Id="cmpBwhaoa2mN9z4WSn5rTvEjA._mNE" Directory="INSTALLFOLDER" Guid="A9312D1E-1B06-43DD-BB6B-AFFCEEC1B62D">
+                <File Id="filL0rPBrH2r4uU_JarWTLHr6ZBWxY" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Octicons.dll" />
+            </Component>
+            <Component Id="cmpNaz.lZ456LO4CVm1NA1EJtKN244" Directory="INSTALLFOLDER" Guid="29BB5ED5-05BD-444A-B719-936C6D9C492D">
+                <File Id="filMg.xz9zI._Ha4vYE4faMUEoMHZ8" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.PhosphorIcons.dll" />
+            </Component>
+            <Component Id="cmp0W7Rq.YYCOQYuuEzQY9Kbli1oz8" Directory="INSTALLFOLDER" Guid="AE008172-DD1F-4EC8-8156-F5B45984DE15">
+                <File Id="fil_z0UAlxkEqzYePOHX3iSWID8InU" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.PicolIcons.dll" />
+            </Component>
+            <Component Id="cmpHuZYArw8mSxN.CqNb_UeQKniiEs" Directory="INSTALLFOLDER" Guid="63B8B424-13C2-44E3-9567-7B56FD7B04A3">
+                <File Id="fil8nboTJTADNU.gP4GkGGyLz3_5OI" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.PixelartIcons.dll" />
+            </Component>
+            <Component Id="cmpNBgbdxaTfMbhCNOU1ye7iu0haUU" Directory="INSTALLFOLDER" Guid="ABF6A37B-CC50-4F1D-873E-F44AEBB5B4B1">
+                <File Id="filx3RwKE3udWWcom4UEcRJptTCxXw" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.RadixIcons.dll" />
+            </Component>
+            <Component Id="cmprR2tLoUzfbDpvlpVF44oiC_p8sU" Directory="INSTALLFOLDER" Guid="C32F6015-65E7-47C7-B313-2AA47E96A4EC">
+                <File Id="fil9WunV8TAgV.1_986_TLytKwDQfg" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.RemixIcon.dll" />
+            </Component>
+            <Component Id="cmpesLiqyR_XP4gja1qFpRm5Ak3yns" Directory="INSTALLFOLDER" Guid="B68ADE09-337F-46EA-84B1-361A18A48C43">
+                <File Id="filqVHThkunTKJkzFjZLVtxdEBcC30" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.RPGAwesome.dll" />
+            </Component>
+            <Component Id="cmpfSsbonn0KnYgeOVQ1l6YRUnDkiQ" Directory="INSTALLFOLDER" Guid="8A9598F5-8180-4C8A-AC70-D1A86FAFDA3E">
+                <File Id="fil3ofNkk5LalKAQQWzihA.OYwH3t8" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.SimpleIcons.dll" />
+            </Component>
+            <Component Id="cmpgiaPZi96aVVrRFyYX2iiluU4WTY" Directory="INSTALLFOLDER" Guid="99494034-883D-4422-AF1D-58994D571FDC">
+                <File Id="filgWYFbFKZe0iDHhzDxdtO4_9Tswg" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Typicons.dll" />
+            </Component>
+            <Component Id="cmpqujd4p2byaIz5.MTU0k4SP8xfsc" Directory="INSTALLFOLDER" Guid="743ADA1E-56F7-4EE5-A3CC-05002992E22A">
+                <File Id="filOil1drWnRyCo_IN8moUQMIBI9Yg" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Unicons.dll" />
+            </Component>
+            <Component Id="cmpiOeMEt1bIYspzB2cCYDR20MHw1c" Directory="INSTALLFOLDER" Guid="2581BE9E-E6E4-4560-893C-B428D31095AB">
+                <File Id="filzz0WzjYr1emetrhtIJdfrQQ3GA8" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.VaadinIcons.dll" />
+            </Component>
+            <Component Id="cmptQfqUQPasByeAzQau1vmec4OOTk" Directory="INSTALLFOLDER" Guid="7A37DD06-4D6F-4E88-BF39-5B8BBCB9E277">
+                <File Id="fil4c3OElWNewcfxPkhpcXBnoCg2G4" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.WeatherIcons.dll" />
+            </Component>
+            <Component Id="cmprpA4Ii0phGpaHKblxeEdWavmhRA" Directory="INSTALLFOLDER" Guid="5A7C9591-D799-460A-B23B-89507C85FE3A">
+                <File Id="filDZ7k9KFkixXIvRaRFxWRYaJ12K4" KeyPath="yes" Source="SourceDir\MahApps.Metro.IconPacks.Zondicons.dll" />
+            </Component>
+            <Component Id="cmps729_svxpfvpjOKUnuRt7NV3GN0" Directory="INSTALLFOLDER" Guid="7DDBDB5F-B108-4737-8897-AA81A3E265C8">
+                <File Id="filbHsu_QP50DTV5PAndSVfvD.x0ck" KeyPath="yes" Source="SourceDir\Markdig.Signed.dll" />
+            </Component>
+            <Component Id="cmplmQwEQZFyIRG.IT.8BgG1flUUCE" Directory="INSTALLFOLDER" Guid="E9DACD3F-FCA3-4B68-9A7F-3E9CDE0BE220">
+                <File Id="fil.LHe2mvQodWMmrFb70PXAe_UjoY" KeyPath="yes" Source="SourceDir\MaterialDesignColors.dll" />
+            </Component>
+            <Component Id="cmpSc6P4CR7.XOgSESnO24_yz90Dg0" Directory="INSTALLFOLDER" Guid="5279C399-FD49-474B-BDAE-16318B902577">
+                <File Id="fil3FNVJWVwvenmv8_1tmCuPrMpz_c" KeyPath="yes" Source="SourceDir\MaterialDesignThemes.MahApps.dll" />
+            </Component>
+            <Component Id="cmpsM3fchFte7C661vKAdDiuerICyo" Directory="INSTALLFOLDER" Guid="1414C529-E8D7-41E2-820B-8DBD942596F7">
+                <File Id="fil8IDOiMmg8NXuuWM3YDLYxvc7I3A" KeyPath="yes" Source="SourceDir\MaterialDesignThemes.Wpf.dll" />
+            </Component>
+            <Component Id="cmpVwbyJ5fL.o82n9kUcXHAtlSEJi4" Directory="INSTALLFOLDER" Guid="876B42EA-49C3-41F7-BE7A-48775D18ADAF">
+                <File Id="filHRUp3Q6VXM_w7.tkgFRYosef9pU" KeyPath="yes" Source="SourceDir\Microsoft.ApplicationInsights.dll" />
+            </Component>
+            <Component Id="cmpeYviLHC_AfqFDmZlUZsPHjRn7Wo" Directory="INSTALLFOLDER" Guid="B14E9526-AD73-4B7A-A4C0-ECE3F73E9E1D">
+                <File Id="fil9QPAUJ30O3d6J_v85gbp6A3Jk.E" KeyPath="yes" Source="SourceDir\Microsoft.Bcl.AsyncInterfaces.dll" />
+            </Component>
+            <Component Id="cmpFSEaA0VtoZcR3qAeqhWu190mbPw" Directory="INSTALLFOLDER" Guid="FB3DB8C7-6985-4EC0-A018-4E7E64A42486">
+                <File Id="filxlotkrYXCtMk7S6RjW8yDQFCMq4" KeyPath="yes" Source="SourceDir\Microsoft.CodeAnalysis.CSharp.dll" />
+            </Component>
+            <Component Id="cmpI6KbbJqmrTY_6hnXqFW5..GoHp4" Directory="INSTALLFOLDER" Guid="5D321B9B-E99D-49E7-8EB6-40453101248D">
+                <File Id="filnns3Mi8AE96FTbB89atwl0s3imA" KeyPath="yes" Source="SourceDir\Microsoft.CodeAnalysis.dll" />
+            </Component>
+            <Component Id="cmpcSXcwo7ihWnC9Q4uS07WX_yQd90" Directory="INSTALLFOLDER" Guid="844774DB-BCBF-485A-82BB-6D17AED6BDB6">
+                <File Id="filVAx9bsdjt1pq8_qapAd5dN8Gq0M" KeyPath="yes" Source="SourceDir\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+            </Component>
+            <Component Id="cmpptcqFK6fKvlKClRr7anAH2T10IA" Directory="INSTALLFOLDER" Guid="D5105857-1F6F-4153-A407-917E2DE1C490">
+                <File Id="filSJOrUJKgnObO47RKLelCAm_vWeI" KeyPath="yes" Source="SourceDir\Microsoft.Extensions.DependencyInjection.dll" />
+            </Component>
+            <Component Id="cmpmnjfirY6T2WNctjN5GcTVgKMXfU" Directory="INSTALLFOLDER" Guid="4585C608-59EB-4CBC-820C-87D7A1CEBB58">
+                <File Id="filmGIK9.Nb_UOrAoMZd6zmfYgwFwQ" KeyPath="yes" Source="SourceDir\Microsoft.Extensions.ObjectPool.dll" />
+            </Component>
+            <Component Id="cmpBKqHMJsvVO7oHcaaMG.r54LqcCw" Directory="INSTALLFOLDER" Guid="65800111-B2E6-4734-9793-3745E3C15F70">
+                <File Id="fil0JNOtqj4Fc2z03veYtCIVUaoqpg" KeyPath="yes" Source="SourceDir\Microsoft.Management.Infrastructure.CimCmdlets.dll" />
+            </Component>
+            <Component Id="cmpvnfvcOuR.dow4ObwCFzpTqKeT.E" Directory="INSTALLFOLDER" Guid="18CCC94D-6C31-4C09-AF2B-D8368D77F50F">
+                <File Id="filszDdIABbZQGkg63aAWgXtBqGiS4" KeyPath="yes" Source="SourceDir\microsoft.management.infrastructure.dll" />
+            </Component>
+            <Component Id="cmpbmqshqTeM.kTk2pdBMaeUpqOaeA" Directory="INSTALLFOLDER" Guid="B2158EBE-9052-49B5-8848-50B4161C5F82">
+                <File Id="filvmYHy9sfR4X_ZNZ4hnW8VO0.tyk" KeyPath="yes" Source="SourceDir\microsoft.management.infrastructure.native.dll" />
+            </Component>
+            <Component Id="cmpctpvHgF.KboXjPvxoZvGvZYbEfw" Directory="INSTALLFOLDER" Guid="014FDB33-A2D5-4EC2-B1FA-2B3820736611">
+                <File Id="filmVHLTz7tnHdusHQ4tEFcy77w.MQ" KeyPath="yes" Source="SourceDir\microsoft.management.infrastructure.native.unmanaged.dll" />
+            </Component>
+            <Component Id="cmplGotS_yUpS3b5FmLNT0jMsVtM0A" Directory="INSTALLFOLDER" Guid="007B33DA-EFC2-4DF2-9BD6-EB2115D0DE81">
+                <File Id="filDp9YCqB5EHN.yPjArhuYo2g8gmw" KeyPath="yes" Source="SourceDir\Microsoft.PowerShell.Commands.Diagnostics.dll" />
+            </Component>
+            <Component Id="cmpn8bfd1r7.c9H2KBD_oi1P4SdjEI" Directory="INSTALLFOLDER" Guid="3B2A6F0B-1418-4C0E-A4EE-2B6FB7E954E6">
+                <File Id="filUXid8v9BfzJNGZf5Nsw4pxDj.sE" KeyPath="yes" Source="SourceDir\Microsoft.PowerShell.Commands.Management.dll" />
+            </Component>
+            <Component Id="cmpbKjEAeNNuB0D5KMyWX_.BnGfsLg" Directory="INSTALLFOLDER" Guid="0DCC2B66-F230-489D-AAE1-A409E58775AB">
+                <File Id="fil_IU.CvnqRehhd9r46tdT3TQbuNg" KeyPath="yes" Source="SourceDir\Microsoft.PowerShell.Commands.Utility.dll" />
+            </Component>
+            <Component Id="cmp4I6TfTT5dLexvs67HezBK0HQqmQ" Directory="INSTALLFOLDER" Guid="3252C0CA-C142-4591-A3BA-074EF591C3CD">
+                <File Id="filXSrREnuGK4mOmgSCLnm5fOV7zVM" KeyPath="yes" Source="SourceDir\Microsoft.PowerShell.ConsoleHost.dll" />
+            </Component>
+            <Component Id="cmpvCw9qA3PCijfy70pFS4oQOu4Yyc" Directory="INSTALLFOLDER" Guid="65F99B9F-353C-4F3C-8B37-6903803E8C2E">
+                <File Id="filK5CEFgGJSqIMLkvMJ3QXrrlBlBs" KeyPath="yes" Source="SourceDir\Microsoft.PowerShell.CoreCLR.Eventing.dll" />
+            </Component>
+            <Component Id="cmpY7XwjBcTan9f96.DX.76RhVXtPI" Directory="INSTALLFOLDER" Guid="04F1CDF0-5D9C-49DC-BE9A-29174F2FD960">
+                <File Id="filxYNXTvOnp6_ufYOTrv.PXtBM8mI" KeyPath="yes" Source="SourceDir\Microsoft.PowerShell.MarkdownRender.dll" />
+            </Component>
+            <Component Id="cmpbEjB9xsZI7JFf2xcvGNn833i4Dg" Directory="INSTALLFOLDER" Guid="6AB02AAA-73A3-4DF7-8BE3-89106C8F3B83">
+                <File Id="filybpzOIH9b0QIck.e.Nxo7qS8UNk" KeyPath="yes" Source="SourceDir\Microsoft.PowerShell.SDK.dll" />
+            </Component>
+            <Component Id="cmpXTpyoLRP_U0_nHkfU4nNE.CxoZY" Directory="INSTALLFOLDER" Guid="BE0067BE-18D1-481E-990A-87A1673F434A">
+                <File Id="filldoY5yyHQfNj3yr9Rn_JHmPWAG4" KeyPath="yes" Source="SourceDir\Microsoft.PowerShell.Security.dll" />
+            </Component>
+            <Component Id="cmpiwynqJXDV2drAErrR31lMfuLb8I" Directory="INSTALLFOLDER" Guid="869DE288-FF1B-45AB-B147-FBDD1A45B068">
+                <File Id="fil9Rqfm2mUDzg6egzVrB46HNshPvI" KeyPath="yes" Source="SourceDir\Microsoft.WSMan.Management.dll" />
+            </Component>
+            <Component Id="cmpgPgqjrR_87unmpyFhSJ3GT4b_8c" Directory="INSTALLFOLDER" Guid="C54980A3-1A58-45AE-BBB3-84A77657406B">
+                <File Id="filHPGjA9tuptGyd4CtfmlyUC_xtmQ" KeyPath="yes" Source="SourceDir\Microsoft.WSMan.Runtime.dll" />
+            </Component>
+            <Component Id="cmpxhMwyKkhDNnmW_utsDhTX4Ag6kQ" Directory="INSTALLFOLDER" Guid="E533E1CE-3E35-45C9-9929-3096E61AF410">
+                <File Id="filIBX8e_aHqgZljwcsabirNsM1eMI" KeyPath="yes" Source="SourceDir\Microsoft.Xaml.Behaviors.dll" />
+            </Component>
+            <Component Id="cmpyjDAB.WKcTwgVDE4D_sbUZAeN4U" Directory="INSTALLFOLDER" Guid="6E903B68-0B6E-477B-BEC3-EC8590B453D3">
+                <File Id="filQoyHtvEBAT9fl0PuEAK0iAJV518" KeyPath="yes" Source="SourceDir\Newtonsoft.Json.dll" />
+            </Component>
+            <Component Id="cmpKT2uPqYbpPvRJpwOCU6gfTc5r8w" Directory="INSTALLFOLDER" Guid="66F5D0D4-B9F4-4347-BDE4-E20528A6873B">
+                <File Id="filXdJIQukpn3mSr_fYgkK5tlrx7So" KeyPath="yes" Source="SourceDir\PowerShell.Core.Instrumentation.dll" />
+            </Component>
+            <Component Id="cmpItcIcpJ0ogIOkIUvy2tmkKd3kk0" Directory="INSTALLFOLDER" Guid="2F045566-72C0-4BAF-9E82-CDA0B413E5D6">
+                <File Id="fil7PQlPMf1kl.TqlDZHqc1EYo80Lw" KeyPath="yes" Source="SourceDir\pwrshplugin.dll" />
+            </Component>
+            <Component Id="cmp7addcchuQlIPhZ3GNv_35BLhmlM" Directory="INSTALLFOLDER" Guid="AD5B5E2E-9097-423F-80CB-DA96E2288CA4">
+                <File Id="filuree.DqkQnCND68ChxEiQBP8OPM" KeyPath="yes" Source="SourceDir\ServiceStack.Common.dll" />
+            </Component>
+            <Component Id="cmpyD.0JdUxC4xg7yOKRnc9F909NH8" Directory="INSTALLFOLDER" Guid="B158FB45-0539-4DC6-B4B5-1A6E3DD651B7">
+                <File Id="filSLUCHyEnSnNHP2s0jrGCH6lMP3o" KeyPath="yes" Source="SourceDir\ServiceStack.Interfaces.dll" />
+            </Component>
+            <Component Id="cmpxchPCDISn..G.S.BSvjwOSbDh1c" Directory="INSTALLFOLDER" Guid="0B282AF9-B4F3-4BE3-914B-A757DC471C7F">
+                <File Id="filArBAXJZjJEfNUABTtfdn3voIy98" KeyPath="yes" Source="SourceDir\ServiceStack.Text.dll" />
+            </Component>
+            <Component Id="cmpLDAQBANRAtytN1I8w7lteQ2jE7o" Directory="INSTALLFOLDER" Guid="DE3D6075-7063-4A6B-8ED8-E7318B811E07">
+                <File Id="fil4MRgks159h47JdB.ZcR_hliUtLI" KeyPath="yes" Source="SourceDir\sni.dll" />
+            </Component>
+            <Component Id="cmpCmFkVpg7J39dq1y2Pav_yKw6cjw" Directory="INSTALLFOLDER" Guid="3051F807-8D71-4024-98A2-AD2AC8AA5356">
+                <File Id="filudqCTBjzzAIwKoHbOox.fcXrhtU" KeyPath="yes" Source="SourceDir\System.CodeDom.dll" />
+            </Component>
+            <Component Id="cmpH6vEC9Jmx87oDPyZmAl7Jj4U7bY" Directory="INSTALLFOLDER" Guid="8B399744-6827-4379-8FD0-4C69438E576F">
+                <File Id="filrA7nTPrXOlfxeHVHDOD407x7Qxk" KeyPath="yes" Source="SourceDir\System.ComponentModel.Composition.dll" />
+            </Component>
+            <Component Id="cmp4k1XiWBMk4hS1Rkoul34OvVJNic" Directory="INSTALLFOLDER" Guid="22147D58-ACC9-4C21-88E0-AEF8ED33CD70">
+                <File Id="fil1EgkSPSFEvFRYiXTdGVbwH9uzsk" KeyPath="yes" Source="SourceDir\System.ComponentModel.Composition.Registration.dll" />
+            </Component>
+            <Component Id="cmpSc5lcG_TAK96_51R4r_MN7fxqSU" Directory="INSTALLFOLDER" Guid="810120B6-E535-4064-96D3-B48D836545DD">
+                <File Id="filE9kW5DfZDTon_CLlqJBvpLrWHgc" KeyPath="yes" Source="SourceDir\System.Data.Odbc.dll" />
+            </Component>
+            <Component Id="cmpGA6wk.nVGdBjuhvNuT953HgJznY" Directory="INSTALLFOLDER" Guid="5199C3F8-2C6F-4710-BE3F-91A030B6F038">
+                <File Id="filaN.jyeRzcRn0O7VbgOoYYbpRpUg" KeyPath="yes" Source="SourceDir\System.Data.OleDb.dll" />
+            </Component>
+            <Component Id="cmpMav_lvlTe7zPhnQ.9CZJTff2jZw" Directory="INSTALLFOLDER" Guid="50FA0FA8-87E0-4FD8-9969-120803CC9204">
+                <File Id="filKF_dlwjdsUbaMHN9BfudZfj9W9g" KeyPath="yes" Source="SourceDir\System.Data.SqlClient.dll" />
+            </Component>
+            <Component Id="cmpEIcDSA_8IveXbEv34D1hf5u0vho" Directory="INSTALLFOLDER" Guid="ABEFDD4B-0900-4C70-84E8-FF58B3F23AFE">
+                <File Id="filoYfIvaZe163zdQ1cIck80Kl4Qy8" KeyPath="yes" Source="SourceDir\System.DirectoryServices.AccountManagement.dll" />
+            </Component>
+            <Component Id="cmp.EEFeBY6Hd7OBYGnW4.n2BYApt8" Directory="INSTALLFOLDER" Guid="D8CF34F9-8E66-439C-91EC-9D670269BB1B">
+                <File Id="filoy0TUf55nbYMbZJrZ8yI86oP3Ss" KeyPath="yes" Source="SourceDir\System.DirectoryServices.Protocols.dll" />
+            </Component>
+            <Component Id="cmphsfffghrQRed6uVDhPrTx64GDFI" Directory="INSTALLFOLDER" Guid="DB1042B3-D635-474A-9BDA-B57820E2C110">
+                <File Id="filFaNivuhCL_3.uJml43zsi.pJG1U" KeyPath="yes" Source="SourceDir\System.Drawing.Common.dll" />
+            </Component>
+            <Component Id="cmpvMHcwQno8ASpzCN6SySp7eFKi.k" Directory="INSTALLFOLDER" Guid="0EE378E1-9196-4B4F-9F31-285E3405F7AE">
+                <File Id="filJPSt1R4PJ7rJpTuZIhQJL4bO6N8" KeyPath="yes" Source="SourceDir\System.IO.Ports.dll" />
+            </Component>
+            <Component Id="cmpkwaEeZe10dOZ0c18f0zGF94t3bo" Directory="INSTALLFOLDER" Guid="DE83C842-C345-4BC9-AFDF-ABD7DBF8B206">
+                <File Id="filNg92eC1fbKOfhZBFGnY3K2oITEE" KeyPath="yes" Source="SourceDir\System.Management.Automation.dll" />
+            </Component>
+            <Component Id="cmpKlSX01skb6MSudzd6opYnsSGrmw" Directory="INSTALLFOLDER" Guid="25BEB9F6-642B-4E4C-A5A4-39D03E382B3C">
+                <File Id="filyvaD4yNN5hcTnbprltmChCY8cYw" KeyPath="yes" Source="SourceDir\System.Management.dll" />
+            </Component>
+            <Component Id="cmpasX1YlYbXXZc63NY646YW_kfSrM" Directory="INSTALLFOLDER" Guid="8FC45427-5795-4662-8636-3FC23D453DDA">
+                <File Id="filhKPJ8i4QXLZg.bZ6TZzoWcwfGNE" KeyPath="yes" Source="SourceDir\System.Net.Http.WinHttpHandler.dll" />
+            </Component>
+            <Component Id="cmpC0GF0cME1mV_Cv8KzksqcZE8w4Y" Directory="INSTALLFOLDER" Guid="47513BD8-2DE7-478F-8344-1FA531A6E55D">
+                <File Id="filXe.aGvY2.8rBdf9g2vDe6PFlMaQ" KeyPath="yes" Source="SourceDir\System.Private.ServiceModel.dll" />
+            </Component>
+            <Component Id="cmpvHl6ngU6DsaMdB7jwIuZSUrI.Qc" Directory="INSTALLFOLDER" Guid="51E40BE1-1A3E-441F-9E4D-44F1E0F137B8">
+                <File Id="fil_Cx8.zIMU0LVllX9K9FkaP_UT70" KeyPath="yes" Source="SourceDir\System.Reflection.Context.dll" />
+            </Component>
+            <Component Id="cmpD9S8AMngUUEQwnsZJgSfyNzaV4s" Directory="INSTALLFOLDER" Guid="F8FE8866-8CAF-4CBE-AF68-04EBC5CDDC48">
+                <File Id="filUq8VA3W8X9HtpGGV_QTUuFjxTk8" KeyPath="yes" Source="SourceDir\System.Runtime.Caching.dll" />
+            </Component>
+            <Component Id="cmp8m0DKsxHGwXyq8M8fzvpbVPqOXg" Directory="INSTALLFOLDER" Guid="C23E0740-9120-44A9-9272-98EAA86B52FD">
+                <File Id="fildc5un5XNmPnbgUIBoKVb9i2cRpI" KeyPath="yes" Source="SourceDir\System.Security.Cryptography.Xml.dll" />
+            </Component>
+            <Component Id="cmp42THS0DGfJHTp_.pDfC3tPiF67k" Directory="INSTALLFOLDER" Guid="95712446-97A3-44E4-B061-F40B606D4071">
+                <File Id="filv5BvhiwEevrHm_twpycFuOlkXaA" KeyPath="yes" Source="SourceDir\System.ServiceModel.dll" />
+            </Component>
+            <Component Id="cmp7YyKUq2kuq.RteZusxXR9s5wH2E" Directory="INSTALLFOLDER" Guid="9CB8E6A4-2E22-4516-BD6E-051CB35571DA">
+                <File Id="filEuvID4CQ2gngQ8T6.eIREsuuJmQ" KeyPath="yes" Source="SourceDir\System.ServiceModel.Duplex.dll" />
+            </Component>
+            <Component Id="cmptXBciPqF0HaVwDDA4rqEnINM06Q" Directory="INSTALLFOLDER" Guid="46D4B2F6-9AA3-4A17-9C8D-53F296FF0826">
+                <File Id="filJLIhGaykesHelO7AeUzuZYz26l8" KeyPath="yes" Source="SourceDir\System.ServiceModel.Http.dll" />
+            </Component>
+            <Component Id="cmpy4I69XvRo34SehflwqdaX_3k_UQ" Directory="INSTALLFOLDER" Guid="79A976A6-D0EB-4EA5-8DD6-E127393E7DEB">
+                <File Id="filjh8ayPF2aAgeBeIoaH5w_r0b6U0" KeyPath="yes" Source="SourceDir\System.ServiceModel.NetTcp.dll" />
+            </Component>
+            <Component Id="cmpCSgh9j7HBdWZqTCUXU1RQ_VDuQU" Directory="INSTALLFOLDER" Guid="DBDAC728-4C3C-44F0-98FD-15D0C2507108">
+                <File Id="filvJuQ5UYWGf2bn5eJxc2o_2UD1sk" KeyPath="yes" Source="SourceDir\System.ServiceModel.Primitives.dll" />
+            </Component>
+            <Component Id="cmpw7O1L..23uv_ai04Qh780eT0KN0" Directory="INSTALLFOLDER" Guid="F34A52CD-EB13-4BE4-81B4-68D226E17F80">
+                <File Id="filgfdb9L_nIsCuRuljbFbzFnJwIsI" KeyPath="yes" Source="SourceDir\System.ServiceModel.Security.dll" />
+            </Component>
+            <Component Id="cmpC28O4P5k0bDRIpv_mNWtm0mW1aM" Directory="INSTALLFOLDER" Guid="2C0D1EE1-20D8-4970-80ED-E7BB2DA5CA5B">
+                <File Id="fil8FvRgu1cU27nHkx26jv5ldTtUeQ" KeyPath="yes" Source="SourceDir\System.ServiceModel.Syndication.dll" />
+            </Component>
+            <Component Id="cmp_AqA_oUg_ZuKarBtxP9FKkA7X04" Directory="INSTALLFOLDER" Guid="E11EADEB-5F47-4849-AE3A-CA0D5EF1023E">
+                <File Id="fil_E4tw0CT5deX1RgWY92.8QXoLUQ" KeyPath="yes" Source="SourceDir\System.ServiceProcess.ServiceController.dll" />
+            </Component>
+            <Component Id="cmpvsq4ll0N9itngHPAihivBKQ3.5E" Directory="INSTALLFOLDER" Guid="090B928C-2ADA-459E-8354-2C9B2B2B19F0">
+                <File Id="filtWOiqr_50niYgnMDK9q2tvsT1LQ" KeyPath="yes" Source="SourceDir\System.Speech.dll" />
+            </Component>
+            <Component Id="cmpVr7X0RMDc_dcxssbje5t37I9_W4" Directory="INSTALLFOLDER" Guid="F6307E49-AEFB-4065-9ABF-A2A765AA3183">
+                <File Id="filH.wLDt5P0sK7oYJZcmNB.Gswa30" KeyPath="yes" Source="SourceDir\System.Web.Services.Description.dll" />
+            </Component>
+            <Component Id="cmpKI0h0RqaHjXn66jjrexhW4zedI8" Directory="INSTALLFOLDER" Guid="6B45B507-709B-4BC0-B21B-9A4EF6C9FA11">
+                <File Id="fil_oYaquLfCqCEAzjLsAAiQdKd2eI" KeyPath="yes" Source="SourceDir\WS_Setup_6.Common.dll" />
+            </Component>
+            <Component Id="cmpF6l8KeH9RRVQvQa7ErwekUqy0Zg" Directory="INSTALLFOLDER" Guid="9A356419-6AE9-4C7A-8B4E-324EA7747337">
+                <File Id="filb2VKNZRFNnfxX73raTe1FMZiHQw" KeyPath="yes" Source="SourceDir\WS_Setup_6.Common.pdb" />
+            </Component>
+            <Component Id="cmpoMdHIkHSYaQrNccWmZt_wx645O4" Directory="INSTALLFOLDER" Guid="7A49EE0A-A68D-4969-BD38-A4E96FF7A1FE">
+                <File Id="filyLJV6TbCOsKxUSfFFdGeA.34Hcc" KeyPath="yes" Source="SourceDir\WS_Setup_6.Core.dll" />
+            </Component>
+            <Component Id="cmp4zvCCxu_ovP_lVV9mTf.QpY4JF4" Directory="INSTALLFOLDER" Guid="0A74860F-532A-482F-B415-D1D364FF9737">
+                <File Id="filRYetEDR1fE.rS.bv4_hjaELbYsg" KeyPath="yes" Source="SourceDir\WS_Setup_6.Core.pdb" />
+            </Component>
+            <Component Id="cmp6FJRwSgKHH2z42GfwnUasWlLw7g" Directory="INSTALLFOLDER" Guid="6B1A61A6-8710-40EC-A947-80C707D4EE51">
+                <File Id="filBJZDm6MGiH6ZbysH0BPDU3FA3eA" KeyPath="yes" Source="SourceDir\WS_Setup_6.UI.deps.json" />
+            </Component>
+            <Component Id="cmpW30uglpYj_qpaVnYzf6tZnupQLU" Directory="INSTALLFOLDER" Guid="8B9F8419-DA05-42F7-898E-E917622C2199">
+                <File Id="fild_p5PL7Q1xj8IkrJcxGqKhnwMqo" KeyPath="yes" Source="SourceDir\WS_Setup_6.UI.dll" />
+            </Component>
+            <Component Id="cmpkvDLuVlxEanLLsZjR0DZ2aHyNB0" Directory="INSTALLFOLDER" Guid="6CF0695D-96F6-4F7E-A4BE-4B6E1278B316">
+                <File Id="fildSG16.s0ii8gaYV.LlgKWE0aPjo" KeyPath="yes" Source="SourceDir\WS_Setup_6.UI.dll.config" />
+            </Component>
+            <Component Id="cmp2KfzcvW5HcVgtH6F0cPweAZ9PmE" Directory="INSTALLFOLDER" Guid="4574C753-3A45-491F-A44A-51D64168F59C">
+                <File Id="filHCxcHCgide3kBysup7IArPzCsB8" KeyPath="yes" Source="SourceDir\WS_Setup_6.UI.exe" />
+            </Component>
+            <Component Id="cmp4QzjknH8zn.sCuMo3FgNSG9giuk" Directory="INSTALLFOLDER" Guid="22FC655C-271B-480A-9AA8-3C16B99C4E03">
+                <File Id="filtnk9ucykINrSMR7pfIRCOIpMwQk" KeyPath="yes" Source="SourceDir\WS_Setup_6.UI.pdb" />
+            </Component>
+            <Component Id="cmpuBp.3vKWWV4ObTM1KOiMFqz7abA" Directory="INSTALLFOLDER" Guid="D5458ADD-A656-47F0-8AA8-C0D1636F9221">
+                <File Id="filKBZdvD7JgJ3hRICXqwG0sWuly4o" KeyPath="yes" Source="SourceDir\WS_Setup_6.UI.runtimeconfig.json" />
+            </Component>
+            <Component Id="cmpKrKLeXxdmPonHnopGtBeKkKDQhI" Directory="dirpd6kyAi8zjoqdnwTAezUlt.Rxgw" Guid="815756F5-7A9A-4620-83DD-A59032017534">
+                <File Id="filViaXaglK28MefG8WIvvB0t_o1eY" KeyPath="yes" Source="SourceDir\Assets\AdvTechLogo.ico" />
+            </Component>
+            <Component Id="cmpLNS6hVCYJXlSl82c0rxG0oe9Ckk" Directory="dirpd6kyAi8zjoqdnwTAezUlt.Rxgw" Guid="E761B09F-BC9E-42EF-AFA0-44ED77B413AD">
+                <File Id="filiKm_RfKg4mJIeL_H0LQ3zYZTVXg" KeyPath="yes" Source="SourceDir\Assets\AdvTechLogo.png" />
+            </Component>
+            <Component Id="cmpQS3BjMc3DLItWYmjio5YKweDDqg" Directory="dirpd6kyAi8zjoqdnwTAezUlt.Rxgw" Guid="54127420-0277-4B81-BEF9-3D815E219F33">
+                <File Id="fillbEDJv1mQL7gZVvaVhTysnOu.kM" KeyPath="yes" Source="SourceDir\Assets\AdvTechSplash.bmp" />
+            </Component>
+            <Component Id="cmppvCjU4u.5tgfWbKcaKzPg6XWfFg" Directory="dirpd6kyAi8zjoqdnwTAezUlt.Rxgw" Guid="6F4ABCD3-4765-4185-B099-EB7F6636D5E6">
+                <File Id="fil7kVTYW.RhcqvykdHWHwdqj3nEeY" KeyPath="yes" Source="SourceDir\Assets\CHANGE_LOG.txt" />
+            </Component>
+            <Component Id="cmplWSw_Trtwb08CtpVV6aDXb3BUt0" Directory="dirpd6kyAi8zjoqdnwTAezUlt.Rxgw" Guid="55536420-883E-4E0A-BE82-38712350AF58">
+                <File Id="filOS1KmZGbUyg05pCPqZ.hULBGgLI" KeyPath="yes" Source="SourceDir\Assets\SignCode_Expires_20260709.pfx" />
+            </Component>
+            <Component Id="cmpgMXvMcaJOSvzXXMfC3mnALoy5Mw" Directory="dirpd6kyAi8zjoqdnwTAezUlt.Rxgw" Guid="CE4CC972-B1A4-4B89-92A5-A29CED9E823B">
+                <File Id="filPcyQnpm2uF5l769VId9jg17vDRc" KeyPath="yes" Source="SourceDir\Assets\WSConfig_encrypted.yml" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

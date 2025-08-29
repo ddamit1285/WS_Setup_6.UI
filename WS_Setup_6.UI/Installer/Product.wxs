@@ -15,10 +15,25 @@
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate />
 
-		<Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
+		<Feature Id="ProductFeature"
+         Title="$(var.ProductName)"
+         Description="$(var.ProductName) core application and supporting files"
+         Level="1">
+
+			<!-- Bring in all harvested files from publish folder -->
 			<ComponentGroupRef Id="AppFilesGroup" />
+
+			<!-- Explicitly pull in your main EXE -->
 			<ComponentRef Id="MainExeComponent" />
-			<!-- Ensure EXE component is in the feature -->
+
+			<!-- Optional: add specific one‑off components -->
+			<!-- <ComponentRef Id="LicenseFileComponent" /> -->
+			<!-- <ComponentRef Id="ConfigComponent" /> -->
+
+			<!-- Optional: add groups for shortcuts, registry entries, etc. -->
+			<!-- <ComponentGroupRef Id="ShortcutGroup" /> -->
+			<!-- <ComponentGroupRef Id="RegistryGroup" /> -->
+
 		</Feature>
 
 		<Icon Id="AppIcon" SourceFile="Assets\AdvTechLogo.ico" />
@@ -26,7 +41,7 @@
 
 	</Product>
 
-	<!-- Directories -->
+	<!-- Directory structure -->
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
@@ -35,7 +50,7 @@
 		</Directory>
 	</Fragment>
 
-	<!-- Component for the installed EXE -->
+	<!-- Main EXE component -->
 	<Fragment>
 		<DirectoryRef Id="INSTALLFOLDER">
 			<Component Id="MainExeComponent" Guid="PUT-GUID-HERE">
@@ -46,10 +61,10 @@
 		</DirectoryRef>
 	</Fragment>
 
-	<!-- Custom Action to run the EXE -->
+	<!-- Custom Action to run EXE (WiX v6 style) -->
 	<Fragment>
 		<CustomAction Id="RunMainExe"
-					  FileRef="MainExeFile"
+					  BinaryKey="MainExeFile"
 					  ExeCommand=""
 					  Execute="deferred"
 					  Impersonate="no"

@@ -2,9 +2,9 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
-	<Bundle Name="WS.Setup.UI"
-			Version="6.7.0.0"
-			Manufacturer="Advantage Technologies"
+	<Bundle Name="$(var.ProductName)"
+			Version="$(var.ProductVersion)"
+			Manufacturer="$(var.Manufacturer)"
 			IconSourceFile="Assets\AdvTechLogo.ico"
 			UpgradeCode="{E578E12A-E636-4712-9AA7-3D58501EE7C4}"
 			Compressed="yes">
@@ -38,7 +38,7 @@
 
 			<!-- Your main MSI -->
 			<MsiPackage
-				SourceFile="$(var.WiX.SetupProject.TargetPath)"
+				SourceFile="$(var.MainMSIPath)"
 				DisplayInternalUI="yes"
 				Vital="yes" />
 		</Chain>

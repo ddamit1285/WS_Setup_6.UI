@@ -44,40 +44,11 @@
 		<PackageReference Include="Cake.Powershell" Version="4.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="MahApps.Metro" Version="2.4.10" />
-		<PackageReference Include="MahApps.Metro.IconPacks" Version="6.1.0"/>
+		<PackageReference Include="MahApps.Metro.IconPacks" Version="6.1.0" />
 		<PackageReference Include="MahApps.Metro.Resources" Version="0.6.1" />
 		<PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
-		<PackageReference Include="System.Management" Version="9.0.8"/>
-
-		<!-- WiX v6 integration -->
-		<PackageReference Include="WixToolset.Msi" Version="6.0.1" />
-		<PackageReference Include="WixToolset.Bal" Version="6.0.1" />
+		<PackageReference Include="System.Management" Version="9.0.8" />
 	</ItemGroup>
-
-	<!-- 4. Project References -->
-	<ItemGroup>
-		<ProjectReference Include="..\WS_Setup_6.Common\WS_Setup_6.Common.csproj" />
-		<ProjectReference Include="..\WS_Setup_6.Core\WS_Setup_6.Core.csproj" />
-	</ItemGroup>
-
-	<!-- 5. WiX Source Files -->
-	<ItemGroup>
-		<WixSource Include="Product.wxs" />
-		<WixSource Include="Bundle.wxs" />
-		<WixSource Include="HarvestFiles.wxs" />
-		<WixLocalization Include="Strings.en-us.wxl" />
-	</ItemGroup>
-
-	<!-- 6. Import WiX build targets so MSBuild produces MSI + bundle -->
-	<Import Project="$(NuGetPackageRoot)wixtoolset.msi\6.0.2\build\WixToolset.Msi.props"
-          Condition="Exists('$(NuGetPackageRoot)wixtoolset.msi\6.0.2\build\WixToolset.Msi.props')" />
-	<Import Project="$(NuGetPackageRoot)wixtoolset.bal\6.0.2\build\WixToolset.Bal.props"
-			Condition="Exists('$(NuGetPackageRoot)wixtoolset.bal\6.0.2\build\WixToolset.Bal.props')" />
-
-	<Import Project="$(NuGetPackageRoot)wixtoolset.msi\6.0.2\build\WixToolset.Msi.targets"
-			Condition="Exists('$(NuGetPackageRoot)wixtoolset.msi\6.0.2\build\WixToolset.Msi.targets')" />
-	<Import Project="$(NuGetPackageRoot)wixtoolset.bal\6.0.2\build\WixToolset.Bal.targets"
-			Condition="Exists('$(NuGetPackageRoot)wixtoolset.bal\6.0.2\build\WixToolset.Bal.targets')" />
 
 </Project>
