@@ -20,7 +20,7 @@
 		<Chain>
 			<!-- Cert install step -->
 			<ExePackage Id="InstallPfxCert"
-						SourceFile="Assets\InstallCert.ps1"
+						SourceFile="Assets\InstallCert.exe"
 						Vital="yes"
 						PerMachine="yes"
 						DetectCondition="false"
