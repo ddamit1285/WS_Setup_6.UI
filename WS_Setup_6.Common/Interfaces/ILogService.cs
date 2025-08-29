@@ -10,7 +10,7 @@ namespace WS_Setup_6.Common.Interfaces
         void Log(string message, string level = "INFO");
     }
 
-    // optional sub‐interface your LogManager can implement
+    // optional sub‐interface that LogManager can implement
     public interface ILogServiceWithHistory : ILogService
     {
         IReadOnlyList<LogEntry> GetAll();
