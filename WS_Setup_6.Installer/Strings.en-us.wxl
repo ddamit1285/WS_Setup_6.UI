@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <WixLocalization Culture="en-us"
                  xmlns="http://wixtoolset.org/schemas/v4/wxl">
-  <String Id="ProductName">Widget Suite Pro</String>
-  <String Id="WelcomeMessage">Welcome to the Widget Suite Pro Setup Wizard</String>
-  <String Id="InstallComplete">Installation complete!</String>
+	<String Id="ProductName" Value="Workstation Onboarding Setup" />
+	<String Id="WelcomeMessage" Value="Welcome to Advantage Technologies Workstation Onboarding Setup" />
+	<String Id="InstallComplete" Value="Installation complete!" />
 </WixLocalization>
