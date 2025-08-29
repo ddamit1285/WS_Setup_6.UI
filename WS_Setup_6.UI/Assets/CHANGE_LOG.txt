@@ -57,3 +57,5 @@ C# and .NET8.0
 --Refactored Uninstaller logic based on the log file from the last run on a Dell machine.
 --Working now on WiX project - still a work in progress.
 
+20250828: WiX project is starting to take shape - still a work in progress.
+--Lots of trial and error - learning as I go on WiX.
