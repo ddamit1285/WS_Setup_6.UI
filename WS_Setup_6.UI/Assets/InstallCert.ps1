@@ -8,18 +8,8 @@ function Write-Log {
     Write-Host "[InstallCert] $Message"
 }
 
-function Update-UI {
-    param (
-        [string]$Text,
-        [int]$Percent
-    )
-    Write-Host "$Percent% - $Text"
-}
-
-Update-UI -Text "Installing certificate…" -Percent 70
-
 if (-not (Test-Path $PfxPath)) {
-    throw "Cannot install certificate — PFX file not found at '$PfxPath'"
+    throw "PFX file not found at '$PfxPath'"
 }
 
 $securePwd = ConvertTo-SecureString -String $PfxPass -AsPlainText -Force
@@ -34,9 +24,9 @@ foreach ($storeName in 'Root','TrustedPublisher') {
     $existing = $store.Certificates.Find('FindByThumbprint', $certObj.Thumbprint, $false)
     if ($existing.Count -eq 0) {
         $store.Add($certObj)
-        Write-Log -Message "Imported cert to $storeName"
+        Write-Log "Imported cert to $storeName"
     } else {
-        Write-Log -Message "Cert already present in $storeName"
+        Write-Log "Cert already present in $storeName"
     }
 
     $store.Close()
