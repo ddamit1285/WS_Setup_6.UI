@@ -6,7 +6,7 @@
 			 Language="1033"
 			 Version="$(var.ProductVersion)"
 			 Manufacturer="$(var.Manufacturer)"
-			 UpgradeCode="{42C9E694-355E-4D5E-BCC7-2FC2F50AC4BE}">
+			 UpgradeCode="42C9E694-355E-4D5E-BCC7-2FC2F50AC4BE">
 
 		<Package InstallerVersion="500"
 				 Compressed="yes"
@@ -16,23 +16,19 @@
 		<MediaTemplate />
 
 		<Feature Id="ProductFeature"
-         Title="$(var.ProductName)"
-         Description="$(var.ProductName) core application and supporting files"
-         Level="1">
+				 Title="$(var.ProductName)"
+				 Description="$(var.ProductName) core application and supporting files"
+				 Level="1">
 
 			<!-- Bring in all harvested files from publish folder -->
-			<ComponentGroupRef Id="AppFilesGroup" />
+			<ComponentGroupRef Id="ProductComponents" />
 
-			<!-- Explicitly pull in your main EXE -->
-			<ComponentRef Id="MainExeComponent" />
+			<!-- Optional: explicitly include main EXE if you want to guarantee it -->
+			<!-- <ComponentRef Id="MainExeComponent" /> -->
 
-			<!-- Optional: add specific one‑off components -->
+			<!-- Optional: add other specific components -->
 			<!-- <ComponentRef Id="LicenseFileComponent" /> -->
 			<!-- <ComponentRef Id="ConfigComponent" /> -->
-
-			<!-- Optional: add groups for shortcuts, registry entries, etc. -->
-			<!-- <ComponentGroupRef Id="ShortcutGroup" /> -->
-			<!-- <ComponentGroupRef Id="RegistryGroup" /> -->
 
 		</Feature>
 
@@ -61,10 +57,10 @@
 		</DirectoryRef>
 	</Fragment>
 
-	<!-- Custom Action to run EXE (WiX v6 style) -->
+	<!-- Custom Action to run EXE after install -->
 	<Fragment>
 		<CustomAction Id="RunMainExe"
-					  BinaryKey="MainExeFile"
+					  FileId="MainExeFile"
 					  ExeCommand=""
 					  Execute="deferred"
 					  Impersonate="no"

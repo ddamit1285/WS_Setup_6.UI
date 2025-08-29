@@ -6,7 +6,7 @@
 			Version="$(var.ProductVersion)"
 			Manufacturer="$(var.Manufacturer)"
 			IconSourceFile="Assets\AdvTechLogo.ico"
-			UpgradeCode="{E578E12A-E636-4712-9AA7-3D58501EE7C4}"
+			UpgradeCode="E578E12A-E636-4712-9AA7-3D58501EE7C4"
 			Compressed="yes">
 
 		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense" />

@@ -59,3 +59,5 @@ C# and .NET8.0
 
 20250828: WiX project is starting to take shape - still a work in progress.
 --Lots of trial and error - learning as I go on WiX.
+
+22050829: Continuing work on WiX project.

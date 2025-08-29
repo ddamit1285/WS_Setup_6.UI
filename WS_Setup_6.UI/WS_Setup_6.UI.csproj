@@ -50,5 +50,9 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
 		<PackageReference Include="System.Management" Version="9.0.8" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\WS_Setup_6.Common\WS_Setup_6.Common.csproj" />
+	  <ProjectReference Include="..\WS_Setup_6.Core\WS_Setup_6.Core.csproj" />
+	</ItemGroup>
 
 </Project>
