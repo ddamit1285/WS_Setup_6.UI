@@ -1,28 +1,21 @@
 <Project Sdk="WixToolset.Sdk/6.0.2" ToolsVersion="4.0">
-
   <PropertyGroup>
     <SuppressValidation>False</SuppressValidation>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <OutputType>Package</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
-
     <ProductName>WS Setup</ProductName>
     <ProductVersion>6.7.0.0</ProductVersion>
     <Manufacturer>Advantage Technologies</Manufacturer>
-
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
-
     <!-- Centralised runtime ID in case it changes -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-
     <!-- Publish directory with design‑time safety net -->
     <PublishDir Condition="'$(PublishDir)' == ''">
-      C:\Users\dan\WS_Setup_6.UI\WS_Setup_6.UI\bin\Release\net8.0-windows\$(RuntimeIdentifier)\publish
-    </PublishDir>
-
+		  ..\WS_Setup_6.UI\bin\Release\net8.0-windows\$(RuntimeIdentifier)\publish\
+	  </PublishDir>
     <WS_Setup_6_UI_TargetPath>$(PublishDir)\WS_Setup_6.UI.exe</WS_Setup_6_UI_TargetPath>
     <MainMSIPath>$(PublishDir)\WS_Setup_6.msi</MainMSIPath>
-
     <!-- Pass values into WiX as preprocessor constants -->
     <DefineConstants>
       WS_Setup_6_UI_TargetPath=$(WS_Setup_6_UI_TargetPath);
@@ -32,14 +25,13 @@
       Manufacturer=$(Manufacturer);
       PublishDir=$(PublishDir)
     </DefineConstants>
+    <ProjectGuid>{021c33ad-d0f2-4ece-8153-83eddf985d73}</ProjectGuid>
   </PropertyGroup>
-
   <ItemGroup>
     <WixSource Include="Product.wxs" />
     <WixSource Include="Bundle.wxs" />
     <WixLocalization Include="Strings.en-us.wxl" />
   </ItemGroup>
-  
   <!-- Only harvest if the publish directory actually exists -->
   <ItemGroup Condition="Exists('$(PublishDir)')">
     <HarvestDirectory Include="$(PublishDir)">
@@ -49,5 +41,13 @@
       <PreprocessorVariable>var.PublishDir</PreprocessorVariable>
     </HarvestDirectory>
   </ItemGroup>
-
+  <ItemGroup>
+    <Folder Include="..\" />
+    <Folder Include="..\WS_Setup_6.UI\" />
+    <Folder Include="..\WS_Setup_6.UI\bin\" />
+    <Folder Include="..\WS_Setup_6.UI\bin\Release\" />
+    <Folder Include="..\WS_Setup_6.UI\bin\Release\net8.0-windows\" />
+    <Folder Include="..\WS_Setup_6.UI\bin\Release\net8.0-windows\win-x64\" />
+    <Folder Include="..\WS_Setup_6.UI\bin\Release\net8.0-windows\win-x64\publish\" />
+  </ItemGroup>
 </Project>

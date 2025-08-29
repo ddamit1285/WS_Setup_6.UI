@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
 
-	<Product Id="*"
-			 Name="$(var.ProductName)"
+	<Package Name="$(var.ProductName)"
 			 Language="1033"
 			 Version="$(var.ProductVersion)"
 			 Manufacturer="$(var.Manufacturer)"
-			 UpgradeCode="42C9E694-355E-4D5E-BCC7-2FC2F50AC4BE">
-
-		<Package InstallerVersion="500"
-				 Compressed="yes"
-				 InstallScope="perMachine" />
+			 UpgradeCode="42C9E694-355E-4D5E-BCC7-2FC2F50AC4BE"
+			 InstallerVersion="500"
+			 Compressed="yes"
+			 Scope="perMachine">
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate />
@@ -35,42 +33,33 @@
 		<Icon Id="AppIcon" SourceFile="Assets\AdvTechLogo.ico" />
 		<Property Id="ARPPRODUCTICON" Value="AppIcon" />
 
-	</Product>
+		<!-- Directory structure -->
+		<StandardDirectory Id="ProgramFilesFolder">
+			<Directory Id="INSTALLFOLDER" Name="$(var.ProductName)" />
+		</StandardDirectory>
 
-	<!-- Directory structure -->
-	<Fragment>
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="$(var.ProductName)" />
-			</Directory>
-		</Directory>
-	</Fragment>
-
-	<!-- Main EXE component -->
-	<Fragment>
+		<!-- Main EXE component -->
 		<DirectoryRef Id="INSTALLFOLDER">
-			<Component Id="MainExeComponent" Guid="PUT-GUID-HERE">
+			<Component Id="MainExeComponent" Guid="b8a1f0e5-3d4a-4b6a-9f2f-8a6f3b8c9d7e">
 				<File Id="MainExeFile"
 					  Source="$(var.WS_Setup_6_UI_TargetPath)"
 					  KeyPath="yes" />
 			</Component>
 		</DirectoryRef>
-	</Fragment>
 
-	<!-- Custom Action to run EXE after install -->
-	<Fragment>
+		<!-- Custom Action to run EXE after install -->
 		<CustomAction Id="RunMainExe"
-					  FileId="MainExeFile"
+					  FileRef="MainExeFile"
 					  ExeCommand=""
 					  Execute="deferred"
 					  Impersonate="no"
 					  Return="asyncNoWait" />
 
 		<InstallExecuteSequence>
-			<Custom Action="RunMainExe" After="InstallFinalize">
-				NOT Installed
+			<Custom Action="RunMainExe"
+					After="InstallFinalize">
 			</Custom>
 		</InstallExecuteSequence>
-	</Fragment>
 
+	</Package>
 </Wix>

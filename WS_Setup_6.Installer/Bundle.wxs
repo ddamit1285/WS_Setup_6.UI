@@ -1,46 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
-     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-
+	 xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+	
+	<Fragment>
+		<Property Id="NETDESKTOP80">
+			<RegistrySearch Id="dotnet8search"
+							Root="HKLM"
+							Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedhost"
+							Type="directory"
+							Name="Path" />
+		</Property>
+	</Fragment>
+	
 	<Bundle Name="$(var.ProductName)"
-			Version="$(var.ProductVersion)"
-			Manufacturer="$(var.Manufacturer)"
-			IconSourceFile="Assets\AdvTechLogo.ico"
-			UpgradeCode="E578E12A-E636-4712-9AA7-3D58501EE7C4"
-			Compressed="yes">
+        Version="$(var.ProductVersion)"
+        Manufacturer="$(var.Manufacturer)"
+        IconSourceFile="Assets\AdvTechLogo.ico"
+        UpgradeCode="E578E12A-E636-4712-9AA7-3D58501EE7C4"
+        Compressed="yes">
 
 		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense" />
-
-		<!-- Detect any installed 8.x Windows Desktop Runtime -->
-		<util:RegistrySearch Root="HKLM"
-							 Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App"
-							 Variable="NETDESKTOP80"
-							 Result="exists" />
-
-		<Chain>
-			<!-- Cert install step -->
+		
+		<Chain>			
 			<ExePackage Id="InstallPfxCert"
-						SourceFile="Assets\InstallCert.exe"
 						Vital="yes"
 						PerMachine="yes"
 						DetectCondition="false"
-						Compressed="yes"
-						Cache="yes" />
+						Cache="keep"
+						Permanent="yes">
+				<Payload SourceFile="Assets\InstallCert.exe"/>
+			</ExePackage>
 
-			<!-- .NET Desktop Runtime 8.0.x (latest) -->
-			<ExePackage
-				Id="dotnetDesktopRuntime"
-				DownloadUrl="https://download.visualstudio.microsoft.com/download/pr/8b5b6b2a-7c1e-4f3a-8f1e-9b6a6f3c2f1a/WindowsDesktop-Runtime-8.0.19-win-x64.exe"
-				InstallCommand="/quiet /norestart"
-				DetectCondition="NETDESKTOP80"
-				Vital="yes"
-				Permanent="yes" />
+			<ExePackage Id="dotnetDesktopRuntime"
+						Vital="yes"
+						PerMachine="yes"
+						DetectCondition="NETDESKTOP80"
+						Permanent="yes"
+						InstallArguments="/norestart">
+				<Payload SourceFile="Assets\WindowsDesktop-Runtime-8.0.19-win-x64.exe" />
+			</ExePackage>
 
-			<!-- Main MSI -->
-			<MsiPackage
-				SourceFile="$(var.MainMSIPath)"
-				DisplayInternalUI="yes"
-				Vital="yes" />
+			<MsiPackage SourceFile="$(var.MainMSIPath)" Vital="yes" />
 		</Chain>
 	</Bundle>
 </Wix>
