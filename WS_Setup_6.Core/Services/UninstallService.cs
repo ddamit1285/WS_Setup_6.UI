@@ -38,7 +38,7 @@ namespace WS_Setup_6.Core.Services
         [GeneratedRegex(@"\{[A-F0-9\-]+\}", RegexOptions.IgnoreCase)]
         private static partial Regex GuidPattern();
 
-        // 1) Query installed applications
+        // 1) Query installed applications from regsitry
         public async Task<IReadOnlyList<UninstallEntry>> QueryInstalledAppsAsync()
         {
             return await Task.Run(() =>
