@@ -55,7 +55,7 @@
 		<DirectoryRef Id="INSTALLFOLDER">
 			<Component Id="MainExeComponent" Guid="PUT-GUID-HERE">
 				<File Id="MainExeFile"
-					  Source="$(var.WS_Setup_6.UI.TargetPath)"
+					  Source="$(var.WS_Setup_6_UI_TargetPath)"
 					  KeyPath="yes" />
 			</Component>
 		</DirectoryRef>
