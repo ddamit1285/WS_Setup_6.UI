@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<WixLocalization Culture="en-us"
-                 xmlns="http://wixtoolset.org/schemas/v4/wxl">
-	<String Id="ProductName" Value="Workstation Onboarding Setup" />
-	<String Id="WelcomeMessage" Value="Welcome to Advantage Technologies Workstation Onboarding Setup" />
-	<String Id="InstallComplete" Value="Installation complete!" />
-</WixLocalization>

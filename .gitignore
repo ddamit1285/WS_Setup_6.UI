@@ -6,7 +6,7 @@
 bin/
 obj/
 Publish/
-Deploy/
+*.wixpbd
 *.user
 *.suo
 *.cache

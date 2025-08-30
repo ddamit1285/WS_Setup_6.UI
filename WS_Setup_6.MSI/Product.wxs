@@ -1,0 +1,47 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Package Name="$(var.ProductName)"
+			 Language="1033"
+			 Version="$(var.ProductVersion)"
+			 Manufacturer="$(var.Manufacturer)"
+			 UpgradeCode="42C9E694-355E-4D5E-BCC7-2FC2F50AC4BE"
+			 InstallerVersion="500"
+			 Compressed="yes"
+			 Scope="perMachine">
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+		
+		<!-- Harvest directly into a ComponentGroup -->
+		<ComponentGroup Id="INSTALLFOLDER" Directory="INSTALLFOLDER">
+			<Files Include="$(var.PublishDir)**" />
+		</ComponentGroup>
+
+		<!-- Define the INSTALLFOLDER directory root -->
+		<StandardDirectory Id="ProgramFilesFolder">
+			<Directory Id="INSTALLFOLDER" Name="$(var.ProductName)" />
+		</StandardDirectory>
+
+		<!-- Feature references the harvested ComponentGroup -->
+		<Feature Id="ProductFeature"
+				 Title="$(var.ProductName)"
+				 Description="$(var.ProductName) core application and supporting files"
+				 Level="1">
+			<ComponentGroupRef Id="INSTALLFOLDER" />
+		</Feature>
+
+		<!-- Add an icon for the app in Programs and Features -->
+		<Icon Id="AppIcon" SourceFile="$(var.PublishDir)\Assets\AdvTechLogo.ico" />
+		<Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+		<!-- Run the main exe after install	-->
+		<CustomAction Id="RunMainExe"
+					  Directory="INSTALLFOLDER"
+					  ExeCommand="WS_Setup_6.UI.exe"
+					  Execute="immediate"
+					  Return="asyncNoWait" />
+
+		<InstallExecuteSequence>
+			<Custom Action="RunMainExe" After="InstallFinalize" />
+		</InstallExecuteSequence>
+	</Package>
+</Wix>
