@@ -1,4 +1,4 @@
-<Project Sdk="WixToolset.Sdk/6.0.2">
+<Project Sdk="WixToolset.Sdk/6.0.2" ToolsVersion="4.0">
   <PropertyGroup>
     <OutputType>Package</OutputType>
     <ProductName>WS Setup</ProductName>
@@ -6,7 +6,7 @@
     <Manufacturer>Advantage Technologies</Manufacturer>
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishDir Condition="'$(PublishDir)' == ''">
+    <PublishDir>
       ..\WS_Setup_6.UI\bin\Release\net8.0-windows\$(RuntimeIdentifier)\publish\
     </PublishDir>
     <WS_Setup_6_UI_TargetPath>$(PublishDir)\WS_Setup_6.UI.exe</WS_Setup_6_UI_TargetPath>
@@ -18,13 +18,11 @@
       PublishDir=$(PublishDir)
     </DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <WixSource Include="Product.wxs" />
     <WixLocalization Include="Strings.en-us.wxl" />
   </ItemGroup>
-
-  <ItemGroup Condition="Exists('$(PublishDir)')">
+  <ItemGroup>
     <HarvestDirectory Include="$(PublishDir)">
       <ComponentGroupName>ProductComponents</ComponentGroupName>
       <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>

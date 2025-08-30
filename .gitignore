@@ -11,5 +11,7 @@ obj/
 *.log
 *.snk
 *.sln
+*.html
+*.htm
 AcroRdrInstaller.exe
 Settings.settings
