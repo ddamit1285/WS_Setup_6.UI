@@ -5,6 +5,8 @@
 # Ignore build artifacts
 bin/
 obj/
+Publish/
+Deploy/
 *.user
 *.suo
 *.cache

@@ -17,12 +17,23 @@
     </DefineConstants>
     <ProjectGuid>{7a0d34f8-b6a1-48e5-a676-fce332120e37}</ProjectGuid>
   </PropertyGroup>
-  <!-- Harvest after publish, before WiX compile -->
-  <Target Name="HarvestPublishedFiles" BeforeTargets="Compile">
-    <HeatDirectory Directory="$(PublishDir)" OutputFile="ProductComponents.wxs" ComponentGroupName="ProductComponents" DirectoryRefId="INSTALLFOLDER" SuppressRootDirectory="true" PreprocessorVariable="var.PublishDir" />
-    <ItemGroup>
-      <Compile Include="ProductComponents.wxs" />
-    </ItemGroup>
+    <PropertyGroup>
+      <!-- Adjust version/path to match your WiX NuGet package -->
+    <WixToolPath>C:\Program Files\WiX Toolset v6.0\bin\x64</WixToolPath>
+  </PropertyGroup>
+  <Target Name="HarvestOutput" BeforeTargets="BeforeBuild">
+  <!-- Publish the UI project -->
+  <MSBuild Projects="..\WS_Setup_6.UI\WS_Setup_6.UI.csproj"
+           Targets="Publish"
+           Properties="Configuration=$(Configuration);
+                       PublishDir=$(MSBuildProjectDirectory)\publish\" />
+
+  <!-- Harvest the published output -->
+  <Exec Command='"$(WixToolPath)\heat.exe" dir "$(MSBuildProjectDirectory)\publish"
+                 -cg MyComponents
+                 -dr INSTALLFOLDER
+                 -out "$(MSBuildProjectDirectory)\HarvestFile.wxs"
+                 -srd -sreg -gg' />
   </Target>
   <ItemGroup>
     <WixSource Include="Product.wxs" />
