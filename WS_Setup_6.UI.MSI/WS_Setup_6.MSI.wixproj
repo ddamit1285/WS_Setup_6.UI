@@ -1,14 +1,12 @@
 <Project Sdk="WixToolset.Sdk/6.0.2" ToolsVersion="4.0">
   <PropertyGroup>
     <OutputType>Package</OutputType>
-    <ProductName>WS Setup</ProductName>
+    <ProductName>WS Setup Package</ProductName>
     <ProductVersion>6.7.0.0</ProductVersion>
     <Manufacturer>Advantage Technologies</Manufacturer>
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishDir>
-      ..\WS_Setup_6.UI\bin\Release\net8.0-windows\$(RuntimeIdentifier)\publish\
-    </PublishDir>
+    <PublishDir>..\WS_Setup_6.UI\bin\$(Configuration)\net8.0-windows\$(RuntimeIdentifier)\publish</PublishDir>
     <WS_Setup_6_UI_TargetPath>$(PublishDir)\WS_Setup_6.UI.exe</WS_Setup_6_UI_TargetPath>
     <DefineConstants>
       WS_Setup_6_UI_TargetPath=$(WS_Setup_6_UI_TargetPath);
@@ -17,17 +15,17 @@
       Manufacturer=$(Manufacturer);
       PublishDir=$(PublishDir)
     </DefineConstants>
+    <ProjectGuid>{7a0d34f8-b6a1-48e5-a676-fce332120e37}</ProjectGuid>
   </PropertyGroup>
+  <!-- Harvest after publish, before WiX compile -->
+  <Target Name="HarvestPublishedFiles" BeforeTargets="Compile">
+    <HeatDirectory Directory="$(PublishDir)" OutputFile="ProductComponents.wxs" ComponentGroupName="ProductComponents" DirectoryRefId="INSTALLFOLDER" SuppressRootDirectory="true" PreprocessorVariable="var.PublishDir" />
+    <ItemGroup>
+      <Compile Include="ProductComponents.wxs" />
+    </ItemGroup>
+  </Target>
   <ItemGroup>
     <WixSource Include="Product.wxs" />
     <WixLocalization Include="Strings.en-us.wxl" />
-  </ItemGroup>
-  <ItemGroup>
-    <HarvestDirectory Include="$(PublishDir)">
-      <ComponentGroupName>ProductComponents</ComponentGroupName>
-      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
-      <SuppressRootDirectory>true</SuppressRootDirectory>
-      <PreprocessorVariable>var.PublishDir</PreprocessorVariable>
-    </HarvestDirectory>
   </ItemGroup>
 </Project>
