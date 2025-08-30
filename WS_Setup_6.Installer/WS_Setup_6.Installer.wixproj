@@ -25,7 +25,6 @@
       Manufacturer=$(Manufacturer);
       PublishDir=$(PublishDir)
     </DefineConstants>
-    <ProjectGuid>{021c33ad-d0f2-4ece-8153-83eddf985d73}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <WixSource Include="Product.wxs" />
@@ -40,14 +39,5 @@
       <SuppressRootDirectory>true</SuppressRootDirectory>
       <PreprocessorVariable>var.PublishDir</PreprocessorVariable>
     </HarvestDirectory>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="..\" />
-    <Folder Include="..\WS_Setup_6.UI\" />
-    <Folder Include="..\WS_Setup_6.UI\bin\" />
-    <Folder Include="..\WS_Setup_6.UI\bin\Release\" />
-    <Folder Include="..\WS_Setup_6.UI\bin\Release\net8.0-windows\" />
-    <Folder Include="..\WS_Setup_6.UI\bin\Release\net8.0-windows\win-x64\" />
-    <Folder Include="..\WS_Setup_6.UI\bin\Release\net8.0-windows\win-x64\publish\" />
   </ItemGroup>
 </Project>

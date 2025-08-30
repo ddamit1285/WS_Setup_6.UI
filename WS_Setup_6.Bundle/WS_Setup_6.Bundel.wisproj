@@ -1,0 +1,22 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputType>Bundle</OutputType>
+    <ProductName>WS Setup</ProductName>
+    <ProductVersion>6.7.0.0</ProductVersion>
+    <Manufacturer>Advantage Technologies</Manufacturer>
+    <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
+    <MainMSIPath>..\WS_Setup_6.MSI\bin\Release\WS_Setup_6.msi</MainMSIPath>
+    <DefineConstants>
+      MainMSIPath=$(MainMSIPath);
+      ProductName=$(ProductName);
+      ProductVersion=$(ProductVersion);
+      Manufacturer=$(Manufacturer)
+    </DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <WixSource Include="Bundle.wxs" />
+    <WixLocalization Include="Strings.en-us.wxl" />
+    <WixExtension Include="WixBalExtension" />
+  </ItemGroup>
+</Project>

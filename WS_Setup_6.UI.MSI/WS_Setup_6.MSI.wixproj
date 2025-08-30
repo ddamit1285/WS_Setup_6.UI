@@ -1,0 +1,35 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <ProductName>WS Setup</ProductName>
+    <ProductVersion>6.7.0.0</ProductVersion>
+    <Manufacturer>Advantage Technologies</Manufacturer>
+    <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishDir Condition="'$(PublishDir)' == ''">
+      ..\WS_Setup_6.UI\bin\Release\net8.0-windows\$(RuntimeIdentifier)\publish\
+    </PublishDir>
+    <WS_Setup_6_UI_TargetPath>$(PublishDir)\WS_Setup_6.UI.exe</WS_Setup_6_UI_TargetPath>
+    <DefineConstants>
+      WS_Setup_6_UI_TargetPath=$(WS_Setup_6_UI_TargetPath);
+      ProductName=$(ProductName);
+      ProductVersion=$(ProductVersion);
+      Manufacturer=$(Manufacturer);
+      PublishDir=$(PublishDir)
+    </DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <WixSource Include="Product.wxs" />
+    <WixLocalization Include="Strings.en-us.wxl" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('$(PublishDir)')">
+    <HarvestDirectory Include="$(PublishDir)">
+      <ComponentGroupName>ProductComponents</ComponentGroupName>
+      <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+      <PreprocessorVariable>var.PublishDir</PreprocessorVariable>
+    </HarvestDirectory>
+  </ItemGroup>
+</Project>
