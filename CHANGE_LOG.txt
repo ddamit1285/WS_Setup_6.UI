@@ -60,4 +60,7 @@ C# and .NET8.0
 20250828: WiX project is starting to take shape - still a work in progress.
 --Lots of trial and error - learning as I go on WiX.
 
-22050829: Continuing work on WiX project.
+20250829: Continuing work on WiX project.
+
+20250830: Got the MSI packages build process going now. 
+--Working on Bundle project now. Getting stubborn errors with trying to use a "default" installer UI from WiX
