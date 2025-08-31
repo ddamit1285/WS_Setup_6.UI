@@ -18,10 +18,4 @@
     <WixSource Include="Bundle.wxs" />
     <WixLocalization Include="Strings.en-us.wxl" />
   </ItemGroup>
-  <ItemGroup>
-    <WixExtension Include="WixToolset.BootstrapperApplications.wixext">
-      <HintPath>WixToolset.BootstrapperApplications.wixext</HintPath>
-      <Name>WixToolset.BootstrapperApplications.wixext</Name>
-    </WixExtension>
-  </ItemGroup>
 </Project>
