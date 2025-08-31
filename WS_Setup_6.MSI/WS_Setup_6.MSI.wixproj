@@ -6,6 +6,7 @@
     <Manufacturer>Advantage Technologies</Manufacturer>
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<ApplicationManifest>msi.manifest</ApplicationManifest>
     <PublishDir>$(MSBuildProjectDirectory)\Publish\</PublishDir>
     <WS_Setup_6_UI_TargetPath>$(PublishDir)\WS_Setup_6.UI.exe</WS_Setup_6_UI_TargetPath>
     <DefineConstants>

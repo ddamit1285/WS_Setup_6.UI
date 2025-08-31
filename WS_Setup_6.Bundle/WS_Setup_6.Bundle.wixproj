@@ -1,10 +1,12 @@
 <Project Sdk="WixToolset.Sdk/6.0.2" ToolsVersion="4.0">
   <PropertyGroup>
     <OutputType>Bundle</OutputType>
-    <ProductName>WS Setup</ProductName>
+    <ProductName>Workstation Onboarding</ProductName>
 	<OutputName>WS Setup</OutputName>
     <ProductVersion>6.7.0.0</ProductVersion>
     <Manufacturer>Advantage Technologies</Manufacturer>
+	<ApplicationManifest>Bundle.manifest</ApplicationManifest>
+	<ApplicationIcon>Assets\AdvTechLogo.ico</ApplicationIcon>
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
     <MainMSIPath>..\WS_Setup_6.MSI\Deploy\$(Configuration)\en-us\WS_Setup_6.MSI.msi</MainMSIPath>
     <DefineConstants>

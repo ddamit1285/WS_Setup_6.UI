@@ -24,11 +24,13 @@
 			Manufacturer="$(var.Manufacturer)"
 			IconSourceFile="Assets\AdvTechLogo.ico"
 			UpgradeCode="E578E12A-E636-4712-9AA7-3D58501EE7C4"
+			Copyright="Copyright © 2025 Advantage Technologies"
 			Compressed="yes">
 
-		<BootstrapperApplication>
-			<bal:WixStandardBootstrapperApplication Theme="rtfLicense"
-													LicenseUrl="https://example.com/license.html"/>
+		<BootstrapperApplication Id="WixStandardBootstrapperApplication.hyperlinkLicense">
+			<bal:WixStandardBootstrapperApplication Theme="hyperlinkLicense"
+													LicenseUrl="https://github.com/dan-damit/WS_Setup_6/blob/main/LICENSE.html"
+													LogoFile="Assets\AdvTechLogo.ico"/>
 		</BootstrapperApplication>
 
 		<Chain>
