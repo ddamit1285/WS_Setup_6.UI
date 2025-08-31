@@ -67,3 +67,4 @@ C# and .NET8.0
 
 20250831: Finished MSI packaging logic
 --got bundle finished as well: WS Setup.exe
+--Need to adjust licensing for the WiX bundle.
