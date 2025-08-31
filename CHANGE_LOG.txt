@@ -64,3 +64,7 @@ C# and .NET8.0
 
 20250830: Got the MSI packages build process going now. 
 --Working on Bundle project now. Getting stubborn errors with trying to use a "default" installer UI from WiX
+
+20250831: Finished MSI packaging logic
+--got bundle finished as well: WS Setup.exe
+--Need to adjust licensing for the WiX bundle.
