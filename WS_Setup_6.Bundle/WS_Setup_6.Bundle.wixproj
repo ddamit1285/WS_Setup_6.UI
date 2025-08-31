@@ -12,10 +12,16 @@
       ProductVersion=$(ProductVersion);
       Manufacturer=$(Manufacturer)
     </DefineConstants>
-    <ProjectGuid>{c5b90df8-70df-44be-a471-dc21c63cd847}</ProjectGuid>
+    <ProjectGuid>c5b90df8-70df-44be-a471-dc21c63cd847</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <WixSource Include="Bundle.wxs" />
     <WixLocalization Include="Strings.en-us.wxl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixToolset.BootstrapperApplications.wixext">
+      <HintPath>WixToolset.BootstrapperApplications.wixext</HintPath>
+      <Name>WixToolset.BootstrapperApplications.wixext</Name>
+    </WixExtension>
   </ItemGroup>
 </Project>

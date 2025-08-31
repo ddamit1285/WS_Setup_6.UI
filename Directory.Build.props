@@ -1,6 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <!-- Global WiX tool path for all projects -->
-    <WixToolPath>C:\Program Files\WiX Toolset v6.0\bin\x64</WixToolPath>
-  </PropertyGroup>
-</Project>
