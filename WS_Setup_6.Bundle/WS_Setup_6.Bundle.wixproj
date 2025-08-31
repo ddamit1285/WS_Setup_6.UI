@@ -2,10 +2,11 @@
   <PropertyGroup>
     <OutputType>Bundle</OutputType>
     <ProductName>WS Setup</ProductName>
+	<OutputName>WS Setup</OutputName>
     <ProductVersion>6.7.0.0</ProductVersion>
     <Manufacturer>Advantage Technologies</Manufacturer>
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
-    <MainMSIPath>..\WS_Setup_6.MSI\Deploy\$(Configuration)\WS_Setup_6.msi</MainMSIPath>
+    <MainMSIPath>..\WS_Setup_6.MSI\Deploy\$(Configuration)\en-us\WS_Setup_6.MSI.msi</MainMSIPath>
     <DefineConstants>
       MainMSIPath=$(MainMSIPath);
       ProductName=$(ProductName);
@@ -18,4 +19,7 @@
     <WixSource Include="Bundle.wxs" />
     <WixLocalization Include="Strings.en-us.wxl" />
   </ItemGroup>
+  <ItemGroup>
+  <PackageReference Include="WixToolset.Bal.wixext" Version="6.0.2" />
+</ItemGroup>
 </Project>

@@ -2,43 +2,53 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
 
-  <Fragment>
-    <Property Id="NETDESKTOP80">
-      <RegistrySearch Id="dotnet8search"
-                      Root="HKLM"
-                      Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedhost"
-                      Type="directory"
-                      Name="Path" />
-    </Property>
-  </Fragment>
+	<Fragment>
+		<Property Id="NETDESKTOP80">
+			<RegistrySearch Id="dotnet8search"
+							Root="HKLM"
+							Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedhost"
+							Type="directory"
+							Name="Path" />
+		</Property>
+		<Property Id="CERTINSTALLED">
+			<RegistrySearch Id="CertCheck"
+							Root="HKLM"
+							Key="SOFTWARE\MyCompany\Certs"
+							Name="Installed"
+							Type="raw" />
+		</Property>
+	</Fragment>
 
-  <Bundle Name="$(var.ProductName)"
-          Version="$(var.ProductVersion)"
-          Manufacturer="$(var.Manufacturer)"
-          IconSourceFile="Assets\AdvTechLogo.ico"
-          UpgradeCode="E578E12A-E636-4712-9AA7-3D58501EE7C4"
-          Compressed="yes">
+	<Bundle Name="$(var.ProductName)"
+			Version="$(var.ProductVersion)"
+			Manufacturer="$(var.Manufacturer)"
+			IconSourceFile="Assets\AdvTechLogo.ico"
+			UpgradeCode="E578E12A-E636-4712-9AA7-3D58501EE7C4"
+			Compressed="yes">
 
-    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
+		<BootstrapperApplication>
+			<bal:WixStandardBootstrapperApplication Theme="rtfLicense"
+													LicenseUrl="https://example.com/license.html"/>
+		</BootstrapperApplication>
 
-    <Chain>
-      <ExePackage Id="InstallPfxCert"
-                  Vital="yes"
-                  PerMachine="yes"
-                  DetectCondition="false"
-                  Cache="keep"
-                  Permanent="yes"
-                  SourceFile="Assets\InstallCert.exe" />
+		<Chain>
+			<ExePackage Id="InstallPfxCert"
+						Vital="yes"
+						PerMachine="yes"
+						DetectCondition="NOT CERTINSTALLED"
+						Cache="keep"
+						Permanent="yes"
+						SourceFile="Assets\InstallCert.exe" />
 
-      <ExePackage Id="dotnetDesktopRuntime"
-                  Vital="yes"
-                  PerMachine="yes"
-                  DetectCondition="NETDESKTOP80"
-                  Permanent="yes"
-                  InstallArguments="/norestart"
-                  SourceFile="Assets\WindowsDesktop-Runtime-8.0.19-win-x64.exe" />
+			<ExePackage Id="dotnetDesktopRuntime"
+						Vital="yes"
+						PerMachine="yes"
+						DetectCondition="NOT NETDESKTOP80"
+						Permanent="yes"
+						InstallArguments="/norestart"
+						SourceFile="Assets\WindowsDesktop-Runtime-8.0.19-win-x64.exe" />
 
-      <MsiPackage SourceFile="$(var.MainMSIPath)" Vital="yes" />
-    </Chain>
-  </Bundle>
+			<MsiPackage SourceFile="$(var.MainMSIPath)" Vital="yes" />
+		</Chain>
+	</Bundle>
 </Wix>

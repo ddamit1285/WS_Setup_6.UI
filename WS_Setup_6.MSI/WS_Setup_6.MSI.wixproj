@@ -1,7 +1,7 @@
 <Project Sdk="WixToolset.Sdk/6.0.2" ToolsVersion="4.0">
   <PropertyGroup>
     <OutputType>Package</OutputType>
-    <ProductName>WS Setup Package</ProductName>
+    <ProductName>Workstation Setup</ProductName>
     <ProductVersion>6.7.0.0</ProductVersion>
     <Manufacturer>Advantage Technologies</Manufacturer>
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>

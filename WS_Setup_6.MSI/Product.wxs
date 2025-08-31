@@ -10,38 +10,48 @@
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate />
-		
-		<!-- Harvest directly into a ComponentGroup -->
-		<ComponentGroup Id="INSTALLFOLDER" Directory="INSTALLFOLDER">
-			<Files Include="$(var.PublishDir)**" />
-		</ComponentGroup>
 
-		<!-- Define the INSTALLFOLDER directory root -->
+		<!-- Define INSTALLFOLDER -->
 		<StandardDirectory Id="ProgramFilesFolder">
 			<Directory Id="INSTALLFOLDER" Name="$(var.ProductName)" />
 		</StandardDirectory>
 
-		<!-- Feature references the harvested ComponentGroup -->
+		<!-- Harvest all files -->
+		<ComponentGroup Id="INSTALLFOLDER" Directory="INSTALLFOLDER">
+			<Files Include="$(var.PublishDir)**" />
+		</ComponentGroup>
+
+		<!-- Desktop shortcut component -->
+		<StandardDirectory Id="DesktopFolder">
+			<Component Id="DesktopShortcutComponent" Guid="d2b3f8e0-4a6a-4b2a-8f8a-3c9c0f4a9b1e">
+				<Shortcut Id="DesktopShortcut"
+						  Name="Onboard Workstation"
+						  Target="[INSTALLFOLDER]WS_Setup_6.UI.exe"
+						  WorkingDirectory="INSTALLFOLDER"
+						  Icon="AppIcon"
+						  IconIndex="0"
+						  Advertise="no" />
+				<RemoveFolder Id="RemoveDesktopShortcut" On="uninstall" />
+				<RegistryValue Root="HKCU"
+							   Key="Software\$(var.Manufacturer)\$(var.ProductName)"
+							   Name="installed"
+							   Type="integer"
+							   Value="1"
+							   KeyPath="yes" />
+			</Component>
+		</StandardDirectory>
+
+		<!-- Icon for Programs and Features and shortcut -->
+		<Icon Id="AppIcon" SourceFile="$(var.PublishDir)\Assets\AdvTechLogo.ico" />
+		<Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+		<!-- Feature -->
 		<Feature Id="ProductFeature"
 				 Title="$(var.ProductName)"
 				 Description="$(var.ProductName) core application and supporting files"
 				 Level="1">
 			<ComponentGroupRef Id="INSTALLFOLDER" />
+			<ComponentRef Id="DesktopShortcutComponent" />
 		</Feature>
-
-		<!-- Add an icon for the app in Programs and Features -->
-		<Icon Id="AppIcon" SourceFile="$(var.PublishDir)\Assets\AdvTechLogo.ico" />
-		<Property Id="ARPPRODUCTICON" Value="AppIcon" />
-
-		<!-- Run the main exe after install	-->
-		<CustomAction Id="RunMainExe"
-					  Directory="INSTALLFOLDER"
-					  ExeCommand="WS_Setup_6.UI.exe"
-					  Execute="immediate"
-					  Return="asyncNoWait" />
-
-		<InstallExecuteSequence>
-			<Custom Action="RunMainExe" After="InstallFinalize" />
-		</InstallExecuteSequence>
 	</Package>
 </Wix>
