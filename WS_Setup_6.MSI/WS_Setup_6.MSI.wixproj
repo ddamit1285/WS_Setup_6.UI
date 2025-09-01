@@ -4,11 +4,14 @@
     <ProductName>Workstation Setup</ProductName>
     <ProductVersion>6.7.0.0</ProductVersion>
     <Manufacturer>Advantage Technologies</Manufacturer>
+    <!-- Where the MSI/Bundle output will go -->
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	<ApplicationManifest>msi.manifest</ApplicationManifest>
-    <PublishDir>$(MSBuildProjectDirectory)\Publish\</PublishDir>
-    <WS_Setup_6_UI_TargetPath>$(PublishDir)\WS_Setup_6.UI.exe</WS_Setup_6_UI_TargetPath>
+    <ApplicationManifest>msi.manifest</ApplicationManifest>
+    <!-- Location of the already-published (and signed) UI EXE -->
+    <PublishDir>..\WS_Setup_6.UI\bin\$(Configuration)\net8.0-windows\win-x64\publish\</PublishDir>
+    <WS_Setup_6_UI_TargetPath>$(PublishDir)WS_Setup_6.UI.exe</WS_Setup_6_UI_TargetPath>
+    <!-- Pass constants into WiX -->
     <DefineConstants>
       WS_Setup_6_UI_TargetPath=$(WS_Setup_6_UI_TargetPath);
       ProductName=$(ProductName);
@@ -18,14 +21,10 @@
     </DefineConstants>
     <ProjectGuid>{7a0d34f8-b6a1-48e5-a676-fce332120e37}</ProjectGuid>
   </PropertyGroup>
-  <Target Name="HarvestOutput" BeforeTargets="BeforeBuild">
-  <!-- Publish the UI project -->
-  <MSBuild Projects="..\WS_Setup_6.UI\WS_Setup_6.UI.csproj"
-           Targets="Publish"
-           Properties="Configuration=$(Configuration);
-                       PublishDir=$(MSBuildProjectDirectory)\publish\" />
+  <!-- Fail early if the signed EXE isn't present -->
+  <Target Name="CheckSignedExe" BeforeTargets="BeforeBuild">
+    <Error Text="Signed UI executable not found at $(WS_Setup_6_UI_TargetPath). &#xD;&#xA;                 Please publish and sign WS_Setup_6.UI before building the installer." Condition="!Exists('$(WS_Setup_6_UI_TargetPath)')" />
   </Target>
-
   <ItemGroup>
     <WixSource Include="Product.wxs" />
     <WixLocalization Include="Strings.en-us.wxl" />

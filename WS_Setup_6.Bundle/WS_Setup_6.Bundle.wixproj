@@ -1,12 +1,11 @@
 <Project Sdk="WixToolset.Sdk/6.0.2" ToolsVersion="4.0">
   <PropertyGroup>
     <OutputType>Bundle</OutputType>
+    <OutputName>WS Setup</OutputName>
     <ProductName>Workstation Onboarding</ProductName>
-	<OutputName>WS Setup</OutputName>
     <ProductVersion>6.7.0.0</ProductVersion>
     <Manufacturer>Advantage Technologies</Manufacturer>
-	<ApplicationManifest>Bundle.manifest</ApplicationManifest>
-	<ApplicationIcon>Assets\AdvTechLogo.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\AdvTechLogo.ico</ApplicationIcon>
     <OutputPath>$(SolutionDir)Deploy\$(Configuration)\</OutputPath>
     <MainMSIPath>..\WS_Setup_6.MSI\Deploy\$(Configuration)\en-us\WS_Setup_6.MSI.msi</MainMSIPath>
     <DefineConstants>
@@ -15,13 +14,16 @@
       ProductVersion=$(ProductVersion);
       Manufacturer=$(Manufacturer)
     </DefineConstants>
-    <ProjectGuid>c5b90df8-70df-44be-a471-dc21c63cd847</ProjectGuid>
+    <SuppressSpecificWarnings>1161</SuppressSpecificWarnings>
+    <ProjectGuid>{c5b90df8-70df-44be-a471-dc21c63cd847}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <WixSource Include="Bundle.wxs" />
     <WixLocalization Include="Strings.en-us.wxl" />
   </ItemGroup>
   <ItemGroup>
-  <PackageReference Include="WixToolset.Bal.wixext" Version="6.0.2" />
-</ItemGroup>
+    <!-- Burn for <Bundle>, Bal for BootstrapperApplication -->
+    <PackageReference Include="WixToolset.Burn" Version="6.0.2" />
+    <PackageReference Include="WixToolset.Bal.wixext" Version="6.0.2" />
+  </ItemGroup>
 </Project>

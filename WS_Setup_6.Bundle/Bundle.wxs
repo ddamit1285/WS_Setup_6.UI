@@ -1,56 +1,51 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
-     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+	 xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
 
-	<Fragment>
-		<Property Id="NETDESKTOP80">
-			<RegistrySearch Id="dotnet8search"
-							Root="HKLM"
-							Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedhost"
-							Type="directory"
-							Name="Path" />
-		</Property>
-		<Property Id="CERTINSTALLED">
-			<RegistrySearch Id="CertCheck"
-							Root="HKLM"
-							Key="SOFTWARE\MyCompany\Certs"
-							Name="Installed"
-							Type="raw" />
-		</Property>
-	</Fragment>
+  <Fragment>
+    <ComplianceCheck>
+      <RegistrySearch Root="HKLM"
+                      Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft .NET Runtime - 8.0.19 (x64)"
+                      Type="raw" />
+    </ComplianceCheck>
+  </Fragment>
 
-	<Bundle Name="$(var.ProductName)"
-			Version="$(var.ProductVersion)"
-			Manufacturer="$(var.Manufacturer)"
-			IconSourceFile="Assets\AdvTechLogo.ico"
-			UpgradeCode="E578E12A-E636-4712-9AA7-3D58501EE7C4"
-			Copyright="Copyright © 2025 Advantage Technologies"
-			Compressed="yes">
+  <Bundle Name="$(var.ProductName)"
+          Version="$(var.ProductVersion)"
+          Manufacturer="$(var.Manufacturer)"
+          IconSourceFile="$(var.ProjectDir)Assets\AdvTechLogo.ico"
+          UpgradeCode="E578E12A-E636-4712-9AA7-3D58501EE7C4"
+          Copyright="Copyright © 2025 Advantage Technologies"
+          Compressed="yes">
 
-		<BootstrapperApplication Id="WixStandardBootstrapperApplication.hyperlinkLicense">
-			<bal:WixStandardBootstrapperApplication Theme="hyperlinkLicense"
-													LicenseUrl="https://github.com/dan-damit/WS_Setup_6/blob/main/LICENSE.html"
-													LogoFile="Assets\AdvTechLogo.ico"/>
-		</BootstrapperApplication>
+	  <BootstrapperApplication>
+		  <bal:WixStandardBootstrapperApplication
+		        Theme="hyperlinkLicense"
+		        LicenseUrl="https://github.com/dan-damit/WS_Setup_6/blob/main/LICENSE.html"
+		        LogoFile="$(var.ProjectDir)Assets\AdvTechLogo.ico"
+		        LogoSideFile="$(var.ProjectDir)Assets\AdvTechLogo.ico"
+		        ShowVersion="yes" />
+	  </BootstrapperApplication>
 
-		<Chain>
-			<ExePackage Id="InstallPfxCert"
-						Vital="yes"
-						PerMachine="yes"
-						DetectCondition="NOT CERTINSTALLED"
-						Cache="keep"
-						Permanent="yes"
-						SourceFile="Assets\InstallCert.exe" />
+    <Chain>
+      <ExePackage Id="InstallPfxCert"
+                  Vital="yes"
+                  PerMachine="yes"
+                  Cache="keep"
+                  Permanent="yes"
+                  SourceFile="Assets\InstallCert.exe" />
 
-			<ExePackage Id="dotnetDesktopRuntime"
-						Vital="yes"
-						PerMachine="yes"
-						DetectCondition="NOT NETDESKTOP80"
-						Permanent="yes"
-						InstallArguments="/norestart"
-						SourceFile="Assets\WindowsDesktop-Runtime-8.0.19-win-x64.exe" />
+      <ExePackage Id="dotnetDesktopRuntime"
+                  Vital="yes"
+                  PerMachine="yes"
+                  InstallCondition="NOT (RegistrySearchResult)"
+                  Permanent="yes"
+                  Cache="keep"
+                  InstallArguments="/install /quiet /norestart"
+                  SourceFile="Assets\windowsdesktop-runtime-8.0.19-win-x64.exe" />
 
-			<MsiPackage SourceFile="$(var.MainMSIPath)" Vital="yes" />
-		</Chain>
-	</Bundle>
+      <MsiPackage SourceFile="$(var.MainMSIPath)" Vital="yes" />
+    </Chain>
+
+  </Bundle>
 </Wix>
