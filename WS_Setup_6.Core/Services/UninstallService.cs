@@ -98,12 +98,21 @@ namespace WS_Setup_6.Core.Services
                 progress.Report(new UninstallProgress(UninstallPhase.StoppingProcesses));
                 await Task.Run(() => StopServicesAndProcesses(app), cancellationToken);
 
+                // NEW: Interactive-only branch
+                if (IsInteractiveOnly(app))
+                {
+                    _log.Log("Detected interactive-only uninstaller, launching UI", "INFO");
+                    progress.Report(new UninstallProgress(UninstallPhase.RunningSilent)); // reuse phase label
+                    LaunchInteractive(app.UninstallString);
+                    return new UninstallResult(app, exitCode: 0, success: true);
+                }
+
                 // Phase 2: Silent uninstall
                 _log.Log("Phase 2: Running silent uninstall", "INFO");
                 progress.Report(new UninstallProgress(UninstallPhase.RunningSilent));
                 var cmd = _helpers.BuildSilentCommand(app.UninstallString);
                 var useShell = cmd.EndsWith("msiexec", StringComparison.OrdinalIgnoreCase)
-                || cmd.Contains("msiexec ", StringComparison.OrdinalIgnoreCase);
+                               || cmd.Contains("msiexec ", StringComparison.OrdinalIgnoreCase);
                 _log.Log($"Executing: {cmd}", "DEBUG");
                 var exitCode = await RunProcessAsync(cmd, cancellationToken, useShellExecute: useShell);
                 _log.Log($"Exit code: {exitCode}", exitCode == 0 ? "INFO" : "WARN");
@@ -178,6 +187,68 @@ namespace WS_Setup_6.Core.Services
         }
 
         #region Helpers
+
+        // Known interactive-only uninstallers
+        private static readonly HashSet<string> InteractiveUninstallNames = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Dell Optimizer",
+            "Dell Watchdog Timer"
+        };
+
+        private static bool MatchesInteractivePattern(string uninstallString)
+        {
+            if (string.IsNullOrWhiteSpace(uninstallString))
+                return false;
+
+            // InstallShield EXE without /s or /quiet
+            return uninstallString.Contains("InstallShield", StringComparison.OrdinalIgnoreCase)
+                && !uninstallString.Contains("/s", StringComparison.OrdinalIgnoreCase)
+                && !uninstallString.Contains("/quiet", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsInteractiveOnly(UninstallEntry app)
+        {
+            return InteractiveUninstallNames.Any(name =>
+                       app.DisplayName?.Contains(name, StringComparison.OrdinalIgnoreCase) == true)
+                   || MatchesInteractivePattern(app.UninstallString);
+        }
+
+        private static (string exePath, string args) SplitExeAndArgs(string uninstallString)
+        {
+            if (uninstallString.StartsWith("\""))
+            {
+                var endQuote = uninstallString.IndexOf('"', 1);
+                var exePath = uninstallString.Substring(1, endQuote - 1);
+                var args = uninstallString.Length > endQuote + 1
+                    ? uninstallString.Substring(endQuote + 1).Trim()
+                    : string.Empty;
+                return (exePath, args);
+            }
+            else
+            {
+                var firstSpace = uninstallString.IndexOf(' ');
+                if (firstSpace > 0)
+                    return (uninstallString.Substring(0, firstSpace),
+                            uninstallString.Substring(firstSpace + 1).Trim());
+                return (uninstallString, string.Empty);
+            }
+        }
+
+        private void LaunchInteractive(string uninstallString)
+        {
+            var (exePath, args) = SplitExeAndArgs(uninstallString);
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = exePath,
+                Arguments = args,
+                UseShellExecute = false,
+                CreateNoWindow = false, // show UI
+                WorkingDirectory = Path.GetDirectoryName(exePath)
+            };
+
+            Process.Start(psi);
+        }
 
         // Stop generic + OEM services/processes
         private static void StopServicesAndProcesses(UninstallEntry app)
