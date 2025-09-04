@@ -48,6 +48,10 @@ namespace WS_Setup_6.UI.ViewModels
             InstalledApps = new ObservableCollection<UninstallEntry>();
             SelectedApps = new ObservableCollection<UninstallEntry>();
 
+            // Hook into selection changes
+            SelectedApps.CollectionChanged += (_, __) =>
+            UninstallSelectedCommand.NotifyCanExecuteChanged();
+
             LoadAppsCommand = new AsyncRelayCommand(LoadAppsAsync);
             UninstallSelectedCommand = new AsyncRelayCommand(
                 ExecuteBatchUninstallAsync,
