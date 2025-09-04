@@ -53,6 +53,10 @@ namespace WS_Setup_6.UI.ViewModels
                 ExecuteBatchUninstallAsync,
                 () => CanExecute
             );
+            
+            // Hook into selection changes so CanExecute re‑evaluates
+            SelectedApps.CollectionChanged += (_, __) =>
+            UninstallSelectedCommand.NotifyCanExecuteChanged();
         }
 
         partial void OnIsUninstallingChanged(bool oldValue, bool newValue) =>
