@@ -57,20 +57,29 @@ namespace WS_Setup_6.Core.Services
 
                         var displayName = sub.GetValue("DisplayName") as string;
                         var uninstallCmd = sub.GetValue("UninstallString") as string;
-                        if (string.IsNullOrWhiteSpace(displayName) ||
-                            string.IsNullOrWhiteSpace(uninstallCmd))
+                        var silentUninstall = sub.GetValue("SilentUninstallString") as string
+                                           ?? sub.GetValue("QuietUninstallString") as string
+                                           ?? sub.GetValue("UninstallStringSilent") as string;
+
+                        var windowsInstallerFlag = (sub.GetValue("WindowsInstaller") as int?) == 1;
+
+                        if (string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(uninstallCmd))
                             continue;
 
                         var entry = new UninstallEntry
                         {
                             DisplayName = displayName,
                             UninstallString = uninstallCmd,
+                            SilentUninstallString = sub.GetValue("SilentUninstallString") as string
+                                                 ?? sub.GetValue("QuietUninstallString") as string
+                                                 ?? sub.GetValue("UninstallStringSilent") as string,
                             InstallLocation = sub.GetValue("InstallLocation") as string,
                             DisplayVersion = sub.GetValue("DisplayVersion") as string,
                             Publisher = sub.GetValue("Publisher") as string,
                             ProductKey = TryExtractGuid(subName) ?? subName,
                             ServiceName = GuessServiceName(displayName),
-                            ProcessNames = GuessProcessNames(displayName)
+                            ProcessNames = GuessProcessNames(displayName),
+                            WindowsInstaller = windowsInstallerFlag // new property
                         };
 
                         list.Add(entry);
@@ -93,47 +102,44 @@ namespace WS_Setup_6.Core.Services
 
             try
             {
-                // Phase 1: Stop services/processes
-                _log.Log("Phase 1: Stopping processes…", "INFO");
                 progress.Report(new UninstallProgress(UninstallPhase.StoppingProcesses));
                 await Task.Run(() => StopServicesAndProcesses(app), cancellationToken);
 
-                // NEW: Interactive-only branch
-                if (IsInteractiveOnly(app))
+                // Prefer vendor-provided silent uninstall string
+                var uninstallCmd = app.SilentUninstallString
+                                 ?? app.QuietUninstallString
+                                 ?? app.UninstallString;
+
+                // 1. Vendor-provided silent uninstall string
+                if (!string.IsNullOrWhiteSpace(app.SilentUninstallString) || !string.IsNullOrWhiteSpace(app.QuietUninstallString))
                 {
-                    _log.Log("Detected interactive-only uninstaller, launching UI", "INFO");
-                    progress.Report(new UninstallProgress(UninstallPhase.RunningSilent)); // reuse phase label
-                    LaunchInteractive(app.UninstallString);
+                    _log.Log("Using vendor-provided silent uninstall string", "INFO");
+                    var (exePath, args) = SplitExeAndArgs(uninstallCmd);
+                    await RunExeAndWaitAsync(exePath, args, cancellationToken);
                     return new UninstallResult(app, exitCode: 0, success: true);
                 }
 
-                // Phase 2: Silent uninstall
-                _log.Log("Phase 2: Running silent uninstall", "INFO");
-                progress.Report(new UninstallProgress(UninstallPhase.RunningSilent));
-                var cmd = _helpers.BuildSilentCommand(app.UninstallString);
-                var useShell = cmd.EndsWith("msiexec", StringComparison.OrdinalIgnoreCase)
-                               || cmd.Contains("msiexec ", StringComparison.OrdinalIgnoreCase);
-                _log.Log($"Executing: {cmd}", "DEBUG");
-                var exitCode = await RunProcessAsync(cmd, cancellationToken, useShellExecute: useShell);
-                _log.Log($"Exit code: {exitCode}", exitCode == 0 ? "INFO" : "WARN");
-
-                // Phase 3: Force delete fallback
-                if (exitCode != 0 || await IsStillInstalledAsync(app))
+                // 2. MSI detection (both hives)
+                if (IsMsiEntry(app))
                 {
-                    _log.Log("Phase 3: Fallback force-delete", "WARN");
-                    progress.Report(new UninstallProgress(UninstallPhase.ForcingDelete));
-                    await Task.Run(() => ForceDeleteRemnants(app), cancellationToken);
+                    var cmd = $"msiexec /x {app.ProductKey} /quiet /norestart";
+                    _log.Log($"Executing MSI uninstall: {cmd}", "DEBUG");
+                    var exitCode = await RunProcessAsync(cmd, cancellationToken, useShellExecute: false);
+                    return new UninstallResult(app, exitCode, exitCode == 0);
                 }
 
-                progress.Report(new UninstallProgress(UninstallPhase.Completed));
-                _log.Log($"Completed uninstall: {app.DisplayName}", "INFO");
+                // 3. Interactive-only branch
+                if (IsInteractiveOnly(app))
+                {
+                    _log.Log("Detected interactive-only uninstaller, launching UI and waiting", "INFO");
+                    LaunchInteractiveAndWait(uninstallCmd);
+                    return new UninstallResult(app, exitCode: 0, success: true);
+                }
 
-                return new UninstallResult(app, exitCode: exitCode, success: exitCode == 0);
-            }
-            catch (OperationCanceledException)
-            {
-                _log.Log($"Uninstall cancelled: {app.DisplayName}", "WARN");
-                return new UninstallResult(app, exitCode: -1, success: false, wasCancelled: true);
+                // 4. Generic EXE handling
+                var (exe, args2) = SplitExeAndArgs(uninstallCmd);
+                await RunExeAndWaitAsync(exe, args2, cancellationToken);
+                return new UninstallResult(app, exitCode: 0, success: true);
             }
             catch (Exception ex)
             {
@@ -195,17 +201,21 @@ namespace WS_Setup_6.Core.Services
             "Dell Watchdog Timer"
         };
 
+        // Detect if uninstall string matches known interactive pattern
         private static bool MatchesInteractivePattern(string uninstallString)
         {
             if (string.IsNullOrWhiteSpace(uninstallString))
                 return false;
 
-            // InstallShield EXE without /s or /quiet
             return uninstallString.Contains("InstallShield", StringComparison.OrdinalIgnoreCase)
+                && uninstallString.Contains("-remove", StringComparison.OrdinalIgnoreCase)
+                && uninstallString.Contains("-runfromtemp", StringComparison.OrdinalIgnoreCase)
                 && !uninstallString.Contains("/s", StringComparison.OrdinalIgnoreCase)
                 && !uninstallString.Contains("/quiet", StringComparison.OrdinalIgnoreCase);
+
         }
 
+        // Detect if app is known interactive-only uninstaller
         private static bool IsInteractiveOnly(UninstallEntry app)
         {
             return InteractiveUninstallNames.Any(name =>
@@ -213,6 +223,7 @@ namespace WS_Setup_6.Core.Services
                    || MatchesInteractivePattern(app.UninstallString);
         }
 
+        // Split uninstall string into exe path + args
         private static (string exePath, string args) SplitExeAndArgs(string uninstallString)
         {
             if (uninstallString.StartsWith("\""))
@@ -234,7 +245,8 @@ namespace WS_Setup_6.Core.Services
             }
         }
 
-        private void LaunchInteractive(string uninstallString)
+        // Launch interactive uninstaller and wait for exit
+        private void LaunchInteractiveAndWait(string uninstallString)
         {
             var (exePath, args) = SplitExeAndArgs(uninstallString);
 
@@ -242,12 +254,38 @@ namespace WS_Setup_6.Core.Services
             {
                 FileName = exePath,
                 Arguments = args,
-                UseShellExecute = false,
-                CreateNoWindow = false, // show UI
+                UseShellExecute = true,
                 WorkingDirectory = Path.GetDirectoryName(exePath)
             };
 
-            Process.Start(psi);
+            using var proc = Process.Start(psi);
+            proc?.WaitForExit();
+        }
+
+        // Run an EXE with args and wait for exit
+        private async Task<int> RunExeAndWaitAsync(string exePath, string args, CancellationToken token)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = exePath,
+                Arguments = args,
+                UseShellExecute = true,
+                WorkingDirectory = Path.GetDirectoryName(exePath)
+            };
+
+            using var proc = Process.Start(psi);
+            if (proc == null)
+                throw new InvalidOperationException($"Failed to start process: {exePath}");
+
+            await proc.WaitForExitAsync(token);
+            return proc.ExitCode;
+        }
+
+        // Detect if registry entry is MSI-based
+        private static bool IsMsiEntry(UninstallEntry app)
+        {
+            // True if registry said WindowsInstaller=1 OR the key name is a GUID
+            return app.WindowsInstaller || Guid.TryParse(app.ProductKey, out _);
         }
 
         // Stop generic + OEM services/processes
