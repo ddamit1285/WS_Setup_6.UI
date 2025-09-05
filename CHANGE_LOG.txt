@@ -68,3 +68,8 @@ C# and .NET8.0
 20250831: Finished MSI packaging logic
 --got bundle finished as well: WS Setup.exe
 --Need to adjust licensing for the WiX bundle.
+
+20250904: Lots of updates to uninstall logic for realtime testing on new dell workstations.
+--All but 2 of the Dell apps have a silent uninstall option
+--Dell Optimizer 32bit and Dell Watchdog Timer seem to require interaction with a user
+--Release 6.7.1 has most up-to-date version now.
