@@ -209,10 +209,7 @@ namespace WS_Setup_6.Core.Services
 
             return uninstallString.Contains("InstallShield", StringComparison.OrdinalIgnoreCase)
                 && uninstallString.Contains("-remove", StringComparison.OrdinalIgnoreCase)
-                && uninstallString.Contains("-runfromtemp", StringComparison.OrdinalIgnoreCase)
-                && !uninstallString.Contains("/s", StringComparison.OrdinalIgnoreCase)
-                && !uninstallString.Contains("/quiet", StringComparison.OrdinalIgnoreCase);
-
+                && uninstallString.Contains("-runfromtemp", StringComparison.OrdinalIgnoreCase);
         }
 
         // Detect if app is known interactive-only uninstaller
