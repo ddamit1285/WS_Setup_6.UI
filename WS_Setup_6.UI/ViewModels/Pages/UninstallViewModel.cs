@@ -80,32 +80,56 @@ namespace WS_Setup_6.UI.ViewModels
 
             var apps = SelectedApps.ToList();
             int total = apps.Count;
-            BatchMax = total * 100;
+            BatchMax = 100;
             BatchProgress = 0;
 
-            for (int i = 0; i < total; i++)
+            // Reorder: silent/MSI first, interactive-only last
+            var silentApps = apps.Where(app => !_uninstallService.IsInteractiveOnly(app)).ToList();
+            var interactiveApps = apps.Where(app => _uninstallService.IsInteractiveOnly(app)).ToList();
+            var orderedApps = silentApps.Concat(interactiveApps).ToList();
+
+            int completed = 0;
+
+            foreach (var app in orderedApps)
             {
-                var app = apps[i];
-                int baseOffset = i * 100;
+                StatusMessage = $"Uninstalling {completed + 1} of {total}: {app.DisplayName}";
 
-                StatusMessage = $"Uninstalling ({i + 1}/{total}): {app.DisplayName}";
-
-                var progress = new Progress<UninstallProgress>(uip =>
-                {
-                    BatchProgress = baseOffset + uip.Percentage;
-                    StatusMessage = $"{app.DisplayName}: {uip.Phase}";
-                });
-
+                var progress = new Progress<UninstallProgress>(_ => { });
                 var result = await _uninstallService.ExecuteUninstallAsync(app, progress, _cts.Token);
 
                 app.Success = result.Success;
                 app.ExitCode = result.ExitCode;
                 app.WasCancelled = result.WasCancelled;
 
-                BatchProgress = (i + 1) * 100;
+                completed++;
+                BatchProgress = (int)((completed / (double)total) * BatchMax);
             }
 
-            StatusMessage = "Batch uninstall complete.";
+            StatusMessage = $"Batch uninstall complete. {completed} apps processed.";
+
+            // Refresh app list
+            await LoadAppsAsync();
+
+            // Fallback: retry interactive uninstall for apps still present
+            var remaining = InstalledApps.Where(installed =>
+                apps.Any(original =>
+                    string.Equals(original.DisplayName, installed.DisplayName, StringComparison.OrdinalIgnoreCase)
+                    && _uninstallService.IsInteractiveOnly(installed)))
+                .ToList();
+
+            foreach (var app in remaining)
+            {
+                StatusMessage = $"Retrying interactively: {app.DisplayName}";
+                _log.Log($"[Fallback] Launching interactive uninstall for {app.DisplayName}", "INFO");
+
+                var result = await _uninstallService.ExecuteUninstallAsync(app, new Progress<UninstallProgress>(_ => { }), CancellationToken.None);
+
+                app.Success = result.Success;
+                app.ExitCode = result.ExitCode;
+                app.WasCancelled = result.WasCancelled;
+            }
+
+            StatusMessage = $"Uninstall complete. {completed} apps processed silently, {remaining.Count} retried interactively.";
             IsUninstalling = false;
             await LoadAppsAsync();
         }

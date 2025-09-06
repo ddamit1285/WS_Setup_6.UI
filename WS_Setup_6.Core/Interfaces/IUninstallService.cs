@@ -29,12 +29,9 @@ namespace WS_Setup_6.Core.Interfaces
             CancellationToken cancellationToken);
 
         /// <summary>
-        /// Removes OEM-branded applications (e.g. Dell) by stopping
-        /// known services/processes, running silent uninstalls, and
-        /// forcing cleanup on failure.
-        /// </summary>
-        Task RemoveOemAppsAsync(
-            IEnumerable<UninstallEntry> apps,
-            CancellationToken cancellationToken = default);
+        /// Expose a method to check if an app is interactive-only.
+        /// This will reorder the batch uninstall queue in the UI.
+        /// </summary> 
+        bool IsInteractiveOnly(UninstallEntry app);
     }
 }

@@ -100,46 +100,52 @@ namespace WS_Setup_6.Core.Services
         {
             _log.Log($"Beginning uninstall: {app.DisplayName}");
 
+            int exitCode = 0;
+            bool success = true;
+
             try
             {
                 progress.Report(new UninstallProgress(UninstallPhase.StoppingProcesses));
                 await Task.Run(() => StopServicesAndProcesses(app), cancellationToken);
 
-                // Prefer vendor-provided silent uninstall string
                 var uninstallCmd = app.SilentUninstallString
                                  ?? app.QuietUninstallString
                                  ?? app.UninstallString;
 
-                // 1. Vendor-provided silent uninstall string
                 if (!string.IsNullOrWhiteSpace(app.SilentUninstallString) || !string.IsNullOrWhiteSpace(app.QuietUninstallString))
                 {
-                    _log.Log("Using vendor-provided silent uninstall string", "INFO");
+                    _log.Log("[Branch: VendorSilent] Using vendor-provided silent uninstall string", "INFO");
                     var (exePath, args) = SplitExeAndArgs(uninstallCmd);
-                    await RunExeAndWaitAsync(exePath, args, cancellationToken);
-                    return new UninstallResult(app, exitCode: 0, success: true);
+                    exitCode = await RunExeAndWaitAsync(exePath, args, cancellationToken);
                 }
-
-                // 2. MSI detection (both hives)
-                if (IsMsiEntry(app))
+                else if (IsMsiEntry(app))
                 {
                     var cmd = $"msiexec /x {app.ProductKey} /quiet /norestart";
-                    _log.Log($"Executing MSI uninstall: {cmd}", "DEBUG");
-                    var exitCode = await RunProcessAsync(cmd, cancellationToken, useShellExecute: false);
-                    return new UninstallResult(app, exitCode, exitCode == 0);
+                    _log.Log($"[Branch: MSI] Executing MSI uninstall: {cmd}", "DEBUG");
+                    exitCode = await RunProcessAsync(cmd, cancellationToken, useShellExecute: false);
+                    success = exitCode == 0;
                 }
-
-                // 3. Interactive-only branch
-                if (IsInteractiveOnly(app))
+                else if (IsInteractiveOnly(app))
                 {
-                    _log.Log("Detected interactive-only uninstaller, launching UI and waiting", "INFO");
+                    _log.Log("[Branch: InteractiveOnly] Launching UI and waiting", "INFO");
                     LaunchInteractiveAndWait(uninstallCmd);
-                    return new UninstallResult(app, exitCode: 0, success: true);
+                    exitCode = 0;
+                }
+                else
+                {
+                    _log.Log("[Branch: GenericExe] Running generic EXE uninstall", "INFO");
+                    var (exe, args2) = SplitExeAndArgs(uninstallCmd);
+                    exitCode = await RunExeAndWaitAsync(exe, args2, cancellationToken);
                 }
 
-                // 4. Generic EXE handling
-                var (exe, args2) = SplitExeAndArgs(uninstallCmd);
-                await RunExeAndWaitAsync(exe, args2, cancellationToken);
-                return new UninstallResult(app, exitCode: 0, success: true);
+                // Final cleanup: check for leftovers and force delete if needed
+                if (await IsStillInstalledAsync(app))
+                {
+                    _log.Log("Detected leftover install remnants, performing forced cleanup", "WARN");
+                    ForceDeleteRemnants(app);
+                }
+
+                return new UninstallResult(app, exitCode, success);
             }
             catch (Exception ex)
             {
@@ -148,50 +154,7 @@ namespace WS_Setup_6.Core.Services
             }
         }
 
-        // 3) OEM removal (e.g. Dell) using the same core helpers
-        public async Task RemoveOemAppsAsync(
-            IEnumerable<UninstallEntry> apps,
-            CancellationToken cancellationToken = default)
-        {
-            foreach (var app in apps)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                    break;
-
-                if (!DellOemProfile.IsMatch(app.DisplayName))
-                    continue;
-
-                _log.Log($"[OEM Removal] Target: {app.DisplayName}", "INFO");
-
-                // Stop OEM-specific services & processes
-                foreach (var svc in DellOemProfile.GetServices(app.DisplayName))
-                    SafeStopService(svc);
-
-                foreach (var proc in DellOemProfile.GetProcesses(app.DisplayName))
-                    SafeKillProcess(proc);
-
-                // Run silent uninstall
-                var cmd = _helpers.BuildSilentCommand(app.UninstallString);
-                if (string.IsNullOrWhiteSpace(cmd))
-                {
-                    _log.Log($"[OEM Removal] No command for {app.DisplayName}", "WARN");
-                    continue;
-                }
-
-                var exitCode = await RunProcessAsync(cmd, cancellationToken);
-                _log.Log(
-                    $"[OEM Removal] {app.DisplayName} exited {exitCode}",
-                    exitCode == 0 ? "INFO" : "WARN");
-
-                // Fallback if still present
-                if (exitCode != 0 || await IsStillInstalledAsync(app))
-                {
-                    _log.Log($"[OEM Removal] Forcing delete: {app.DisplayName}", "WARN");
-                    ForceDeleteRemnants(app);
-                }
-            }
-        }
-
+        // Helper methods ---------------------------------------------------------------------------------------
         #region Helpers
 
         // Known interactive-only uninstallers
@@ -202,22 +165,35 @@ namespace WS_Setup_6.Core.Services
         };
 
         // Detect if uninstall string matches known interactive pattern
-        private static bool MatchesInteractivePattern(string uninstallString)
+        private bool MatchesInteractivePattern(string uninstallString)
         {
             if (string.IsNullOrWhiteSpace(uninstallString))
                 return false;
 
-            return uninstallString.Contains("InstallShield", StringComparison.OrdinalIgnoreCase)
-                && uninstallString.Contains("-remove", StringComparison.OrdinalIgnoreCase)
-                && uninstallString.Contains("-runfromtemp", StringComparison.OrdinalIgnoreCase);
+            bool match = uninstallString.Contains("InstallShield", StringComparison.OrdinalIgnoreCase)
+                      && uninstallString.Contains("-remove", StringComparison.OrdinalIgnoreCase)
+                      && uninstallString.Contains("-runfromtemp", StringComparison.OrdinalIgnoreCase);
+
+            if (match)
+                _log.Log($"Matched interactive pattern: {uninstallString}", "DEBUG");
+
+            return match;
         }
 
         // Detect if app is known interactive-only uninstaller
-        private static bool IsInteractiveOnly(UninstallEntry app)
+        public bool IsInteractiveOnly(UninstallEntry app)
         {
-            return InteractiveUninstallNames.Any(name =>
-                       app.DisplayName?.Contains(name, StringComparison.OrdinalIgnoreCase) == true)
-                   || MatchesInteractivePattern(app.UninstallString);
+            var uninstallCmd = app.SilentUninstallString
+                             ?? app.QuietUninstallString
+                             ?? app.UninstallString;
+
+            bool isInteractive = InteractiveUninstallNames.Any(name =>
+                                    app.DisplayName?.Contains(name, StringComparison.OrdinalIgnoreCase) == true)
+                                 || MatchesInteractivePattern(uninstallCmd);
+
+            _log.Log($"Classified '{app.DisplayName}' as {(isInteractive ? "InteractiveOnly" : "Silent/MSI")}", "DEBUG");
+
+            return isInteractive;
         }
 
         // Split uninstall string into exe path + args
@@ -245,15 +221,29 @@ namespace WS_Setup_6.Core.Services
         // Launch interactive uninstaller and wait for exit
         private void LaunchInteractiveAndWait(string uninstallString)
         {
+            if (string.IsNullOrWhiteSpace(uninstallString))
+            {
+                _log.Log("Uninstall string is null or empty — cannot launch interactive uninstaller", "ERROR");
+                return;
+            }
+
             var (exePath, args) = SplitExeAndArgs(uninstallString);
+
+            if (!File.Exists(exePath))
+            {
+                _log.Log($"Executable not found: {exePath}", "ERROR");
+                return;
+            }
 
             var psi = new ProcessStartInfo
             {
                 FileName = exePath,
                 Arguments = args,
                 UseShellExecute = true,
-                WorkingDirectory = Path.GetDirectoryName(exePath)
+                WorkingDirectory = Path.GetDirectoryName(exePath) ?? Environment.CurrentDirectory
             };
+
+            _log.Log($"Launching interactive uninstall: {exePath} {args}", "INFO");
 
             using var proc = Process.Start(psi);
             proc?.WaitForExit();
@@ -267,7 +257,7 @@ namespace WS_Setup_6.Core.Services
                 FileName = exePath,
                 Arguments = args,
                 UseShellExecute = true,
-                WorkingDirectory = Path.GetDirectoryName(exePath)
+                WorkingDirectory = Path.GetDirectoryName(exePath) ?? Environment.CurrentDirectory
             };
 
             using var proc = Process.Start(psi);
@@ -296,6 +286,7 @@ namespace WS_Setup_6.Core.Services
                     SafeKillProcess(name);
         }
 
+        // Safely stop a service by name
         private static void SafeStopService(string svc)
         {
             try
@@ -310,6 +301,7 @@ namespace WS_Setup_6.Core.Services
             catch { /* swallow or log externally */ }
         }
 
+        // Safely kill processes by name
         private static void SafeKillProcess(string pname)
         {
             try
@@ -383,6 +375,20 @@ namespace WS_Setup_6.Core.Services
             {
                 return Task.FromResult(true);
             }
+
+            var keys = new[]
+            {
+                $@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{app.ProductKey}",
+                $@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{app.ProductKey}"
+            };
+
+            foreach (var path in keys)
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(path);
+                if (key != null)
+                    return Task.FromResult(true);
+            }
+
             return Task.FromResult(false);
         }
 
@@ -421,7 +427,7 @@ namespace WS_Setup_6.Core.Services
         }
 
         // Guess common service names
-        private static string? GuessServiceName(string displayName)
+        public string? GuessServiceName(string displayName)
         {
             if (displayName.Contains("Office", StringComparison.OrdinalIgnoreCase))
                 return "OfficeClickToRunSvc";
@@ -433,7 +439,7 @@ namespace WS_Setup_6.Core.Services
         }
 
         // Guess common process names
-        private static string[]? GuessProcessNames(string displayName)
+        public string[]? GuessProcessNames(string displayName)
         {
             if (displayName.Contains("Dell", StringComparison.OrdinalIgnoreCase))
             {
@@ -443,52 +449,6 @@ namespace WS_Setup_6.Core.Services
                     return new[] { "DellClientManagementService" };
             }
             return null;
-        }
-
-        #endregion
-
-        // Dell OEM-specific patterns and mappings
-        // Update as needed for specific programs
-        #region Dell OEM Profile
-
-        private static class DellOemProfile
-        {
-            private static readonly string[] Patterns = {
-                "Dell Optimizer",
-                "Dell Core Services",
-                "Dell Command",
-                "Dell Power Manager",
-                "Dell SupportAssist",
-                "Dell Digital Delivery"
-            };
-
-            private static readonly Dictionary<string, string[]> ServiceMap =
-                new(StringComparer.OrdinalIgnoreCase) {
-                    { "Dell Optimizer",        new[] { "DellOptimizer" } },
-                    { "Dell Core Services",    new[] { "DellClientManagementService" } },
-                    { "Dell Command",          new[] { "DellCommandUpdate" } },
-                    { "Dell Power Manager",    new[] { "DellPwrMgrSvc" } },
-                };
-
-            private static readonly Dictionary<string, string[]> ProcessMap =
-                new(StringComparer.OrdinalIgnoreCase) {
-                    { "Dell Optimizer",     new[] { "DellOptimizer", "DOCLI" } },
-                    { "Dell Core Services", new[] { "DellClientManagementService" } },
-                    { "Dell Command",       new[] { "DellCommandUpdate" } },
-                };
-
-            public static bool IsMatch(string name) =>
-                Patterns.Any(p => name.Contains(p, StringComparison.OrdinalIgnoreCase));
-
-            public static string[] GetServices(string name) =>
-                ServiceMap.TryGetValue(MatchKey(name), out var svcs) ? svcs : Array.Empty<string>();
-
-            public static string[] GetProcesses(string name) =>
-                ProcessMap.TryGetValue(MatchKey(name), out var procs) ? procs : Array.Empty<string>();
-
-            private static string MatchKey(string name) =>
-                Patterns.FirstOrDefault(p => name.Contains(p, StringComparison.OrdinalIgnoreCase))
-                ?? name;
         }
 
         #endregion
